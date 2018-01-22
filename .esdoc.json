@@ -1,0 +1,28 @@
+{
+  "source": "./src",
+  "destination": "./docs",
+  "excludes": ["lib/"],
+  "plugins": [{
+    "name": "esdoc-standard-plugin",
+    "option": {
+      "lint": {"enable": true},
+      "coverage": {"enable": true},
+      "brand": {
+        "title": "xmm-js - A Javascript implementation of XMM",
+        "description": "XMM Love",
+        "repository": "https://github.com/JulesFrancoise/xmm-js",
+        "site": "https://xmmjs.netlify.com"
+      },
+      "manual": {
+        "index": "./manual/overview.md",
+        "files": [
+          "./manual/overview.md",
+          "./manual/getting_started.md"
+        ]
+      }
+    }
+  }, {
+    "name": "esdoc-ecmascript-proposal-plugin",
+    "option": { "all": true }
+  }]
+}

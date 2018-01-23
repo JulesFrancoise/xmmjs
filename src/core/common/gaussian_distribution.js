@@ -16,7 +16,7 @@ export default class GaussianDistribution {
    * @param {String}  [covarianceMode='full'] covariance mode (full vs
    * diagonal)
    */
-  Constructor(
+  constructor(
     bimodal = false,
     dimension = 1,
     inputDimension = 0,
@@ -32,19 +32,18 @@ export default class GaussianDistribution {
   }
 
   allocate() {
-    this.mean.resize(this.dimension);
+    this.mean = new Array(this.dimension).fill(0);
     if (this.covarianceMode === 'full') {
-      this.covariance.resize(this.dimension * this.dimension);
-      this.inverseCovariance.resize(this.dimension * this.dimension);
+      this.covariance = new Array(this.dimension ** 2).fill(0);
+      this.inverseCovariance = new Array(this.dimension ** 2).fill(0);
       if (this.bimodal) {
-        this.inverseCovarianceInput
-          .resize(this.inputDimension * this.inputDimension);
+        this.inverseCovarianceInput = new Array(this.inputDimension ** 2).fill(0);
       }
     } else {
-      this.covariance.resize(this.dimension);
-      this.inverseCovariance.resize(this.dimension);
+      this.covariance = new Array(this.dimension).fill(0);
+      this.inverseCovariance = new Array(this.dimension).fill(0);
       if (this.bimodal) {
-        this.inverseCovarianceInput.resize(this.inputDimension);
+        this.inverseCovarianceInput = new Array(this.inputDimension).fill(0);
       }
     }
   }
@@ -81,7 +80,7 @@ export default class GaussianDistribution {
     }
 
     let p = Math.exp(-0.5 * euclideanDistance) /
-      Math.sqrt(this.covarianceDeterminant * ((2 * Math.pi) ** this.dimension));
+      Math.sqrt(this.covarianceDeterminant * ((2 * Math.PI) ** this.dimension));
 
     if (p < 1e-180 || Number.isNaN(p) || Math.abs(p) === +Infinity) {
       p = 1e-180;
@@ -119,7 +118,7 @@ export default class GaussianDistribution {
 
     let p = Math.exp(-0.5 * euclideanDistance) /
                Math.sqrt(this.covarianceDeterminantInput *
-                    ((2 * Math.pi) ** this.inputDimension));
+                    ((2 * Math.PI) ** this.inputDimension));
 
     if (p < 1e-180 || Number.isNaN(p) || Math.abs(p) === +Infinity) p = 1e-180;
 
@@ -171,7 +170,7 @@ export default class GaussianDistribution {
     }
 
     let p = Math.exp(-0.5 * euclideanDistance) /
-      Math.sqrt(this.covarianceDeterminant * ((2 * Math.pi) ** this.dimension));
+      Math.sqrt(this.covarianceDeterminant * ((2 * Math.PI) ** this.dimension));
 
     if (p < 1e-180 || Number.isNaN(p) || Math.abs(p) === +Infinity) {
       p = 1e-180;
@@ -224,10 +223,10 @@ export default class GaussianDistribution {
     if (this.covarianceMode === 'full') {
       const covMatrix = new Matrix(this.dimension, this.dimension);
 
-      covMatrix.data = this.covariance.begin();
+      covMatrix.data = this.covariance.slice();
       const inv = covMatrix.pinv();
       this.covarianceDeterminant = inv.determinant;
-      this.inverseCovariance = inv.matrix;
+      this.inverseCovariance = inv.matrix.data;
 
       // If regression active: create inverse covariance matrix for input
       // modality.
@@ -241,7 +240,7 @@ export default class GaussianDistribution {
         }
         const invInput = covMatrixInput.pinv();
         this.covarianceDeterminantInput = invInput.determinant;
-        this.inverseCovarianceInput = invInput.matrix;
+        this.inverseCovarianceInput = invInput.matrix.data;
       }
     } else { // DIAGONAL COVARIANCE
       this.covarianceDeterminant = 1;

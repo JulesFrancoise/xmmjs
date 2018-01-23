@@ -19,14 +19,20 @@ export default class TrainingSet {
   }
 
   empty() {
-    return this.size() === 0;
+    return this.length === 0;
   }
 
   getPhrase(phraseIndex) {
-    if (Object.keys(this.phrases).includes(phraseIndex)) {
-      return this.phrases[phraseIndex];
+    if (Object.keys(this.phrases).includes(phraseIndex.toString())) {
+      return this.phrases[phraseIndex.toString()];
     }
     return null;
+  }
+
+  forEach(callback) {
+    Object.keys(this.phrases).forEach((phraseIndex) => {
+      callback(this.phrases[phraseIndex], phraseIndex, this.phrases);
+    });
   }
 
   push(phraseIndex, label = undefined, phrase = undefined) {
@@ -72,11 +78,11 @@ export default class TrainingSet {
     let totalLength = 0;
     Object.keys(this.phrases).forEach((i) => {
       for (let d = 0; d < this.dimension; d += 1) {
-        for (let t = 0; t < this.phrases[i].size(); t += 1) {
+        for (let t = 0; t < this.phrases[i].length; t += 1) {
           sum[d] += this.phrases[i].get(t, d);
         }
       }
-      totalLength += this.phrases[i].size();
+      totalLength += this.phrases[i].length;
     });
 
     return sum.map(x => x / totalLength);
@@ -88,11 +94,11 @@ export default class TrainingSet {
     let totalLength = 0;
     Object.keys(this.phrases).forEach((i) => {
       for (let d = 0; d < this.dimension; d += 1) {
-        for (let t = 0; t < this.phrases[i].size(); t += 1) {
+        for (let t = 0; t < this.phrases[i].length; t += 1) {
           stddev[d] += (this.phrases[i].get(t, d) - mean[d]) ** 2;
         }
       }
-      totalLength += this.phrases[i].size();
+      totalLength += this.phrases[i].length;
     });
 
     return stddev.map(x => Math.sqrt(x / totalLength));
@@ -105,7 +111,7 @@ export default class TrainingSet {
     );
     Object.keys(this.phrases).forEach((i) => {
       for (let d = 0; d < this.dimension; d += 1) {
-        for (let t = 0; t < this.phrases[i].size(); t += 1) {
+        for (let t = 0; t < this.phrases[i].length; t += 1) {
           minmax[d].min += Math.min(minmax[d].min, this.phrases[i].get(t, d));
           minmax[d].max += Math.max(minmax[d].max, this.phrases[i].get(t, d));
         }

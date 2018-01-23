@@ -120,7 +120,7 @@ export default class Matrix {
 
     for (let k = 0; k < n; k += 1) {
       let i = k;
-      while (Math.abs(mat.data[(i * 2 * n) + k]) < kEpsilonPseudoInverse()) {
+      while (Math.abs(mat.data[(i * 2 * n) + k]) < kEpsilonPseudoInverse) {
         i += 1;
         if (i === n) {
           throw new Error('Non-invertible matrix');
@@ -133,7 +133,7 @@ export default class Matrix {
         mat.swapLines(i, k);
       }
 
-      newMat.data = mat.data;
+      newMat.data = mat.data.slice();
 
       for (let j = 0; j < 2 * n; j += 1) {
         newMat.data[(k * 2 * n) + j] /= mat.data[(k * 2 * n) + k];
@@ -147,7 +147,7 @@ export default class Matrix {
           }
         }
       }
-      mat.data = newMat.data;
+      mat.data = newMat.data.slice();
     }
 
     const dst = new Matrix(this.nrows, this.ncols);

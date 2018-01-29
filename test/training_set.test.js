@@ -1,5 +1,5 @@
 import test from 'ava';
-import TrainingSet from '../src/core/training_set';
+import TrainingSet from '../src/training_set';
 
 test('Create a training set with default parameters', (t) => {
   const ts = new TrainingSet();

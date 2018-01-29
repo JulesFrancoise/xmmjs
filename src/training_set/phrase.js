@@ -17,6 +17,9 @@ export default class Phrase {
   }
 
   get(index, dim) {
+    if (typeof index !== 'number' || Math.floor(index) !== index) {
+      throw new Error('The index must be an integer');
+    }
     if (dim >= this.dimension) {
       throw new Error('Phrase: dimension out of bounds');
     }
@@ -34,6 +37,9 @@ export default class Phrase {
     }
     if (index >= this.length) {
       throw new Error('Phrase: index out of bounds');
+    }
+    if (!this.inputData[index]) {
+      throw new Error('WTF?');
     }
     return this.inputData[index][dim];
   }

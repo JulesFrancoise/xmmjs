@@ -1,4 +1,4 @@
-export function createEllipse() {
+export function Ellipse() {
   return {
     x: 0,
     y: 0,
@@ -9,7 +9,7 @@ export function createEllipse() {
 }
 
 export function covariance2ellipse(cxx, cxy, cyy) {
-  const gaussianEllipse = createEllipse();
+  const gaussianEllipse = Ellipse();
   gaussianEllipse.x = 0;
   gaussianEllipse.y = 0;
 

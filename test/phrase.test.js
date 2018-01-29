@@ -1,5 +1,5 @@
 import test from 'ava';
-import Phrase from '../src/core/training_set/phrase';
+import Phrase from '../src/training_set/phrase';
 
 test('Create a phrase with default parameters', (t) => {
   const p = new Phrase();

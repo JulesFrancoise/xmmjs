@@ -56,21 +56,26 @@ export default class TrainingSet {
   }
 
   clear() {
-    this.phrases.clear();
-    this.labels.clear();
+    this.phrases = {};
   }
 
   getPhrasesOfClass(label) {
-    return Object.keys(this.phrases)
+    const ts = new TrainingSet(this);
+    ts.phrases = Object.keys(this.phrases)
       .filter(i => this.phrases[i].label === label)
       .map(i => ({ i: this.phrases[i] }))
       .reduce((x, p) => ({ ...x, ...p }), {});
+    return ts;
   }
 
   labels() {
     return Object.keys(this.phrases)
       .map(i => this.phrases[i].label)
       .reduce((ll, x) => (ll.includes(x) ? ll : ll.concat([x])), []);
+  }
+
+  indices() {
+    return Object.keys(this.phrases);
   }
 
   mean() {

@@ -1,31 +1,14 @@
+/* eslint-disable no-use-before-define */
 const kEpsilonPseudoInverse = 1.0e-9;
 
-export default class Matrix {
-  constructor(nrows = 0, ncols = -1) {
-    /**
-     * Number of rows of the matrix
-     * @type {Number}
-     */
-    this.nrows = nrows;
-    /**
-     * Number of columns of the matrix
-     * @type {Number}
-     */
-    this.ncols = ncols < 0 ? nrows : ncols;
-    /**
-     * Matrix data
-     * @type {Number}
-     */
-    this.data = Array(this.nrows * this.ncols).fill(0);
-  }
-
+const matrixPrototype = {
   /**
    * Compute the Sum of the matrix
    * @return {Number} Sum of all elements in the matrix
    */
   sum() {
     return this.data.reduce((a, b) => a + b, 0);
-  }
+  },
 
   /**
    * Pretty-Print the matrix
@@ -38,21 +21,21 @@ export default class Matrix {
       }
       console.log(line); // eslint-disable-line no-console
     }
-  }
+  },
 
   /**
    * Compute the transpose matrix
    * @return {Matrix}
    */
   transpose() {
-    const out = new Matrix(this.ncols, this.nrows);
+    const out = Matrix(this.ncols, this.nrows);
     for (let i = 0; i < this.ncols; i += 1) {
       for (let j = 0; j < this.nrows; j += 1) {
         out.data[(i * this.nrows) + j] = this.data[(j * this.ncols) + i];
       }
     }
     return out;
-  }
+  },
 
   /**
    * Compute the product of matrices
@@ -63,7 +46,7 @@ export default class Matrix {
     if (this.ncols !== mat.nrows) {
       throw new Error('Wrong dimensions for matrix product');
     }
-    const out = new Matrix(this.nrows, mat.ncols);
+    const out = Matrix(this.nrows, mat.ncols);
     for (let i = 0; i < this.nrows; i += 1) {
       for (let j = 0; j < mat.ncols; j += 1) {
         out.data[(i * mat.ncols) + j] = 0;
@@ -74,7 +57,7 @@ export default class Matrix {
       }
     }
     return out;
-  }
+  },
 
   /**
    * Compute the Pseudo-Inverse of a Matrix
@@ -95,7 +78,7 @@ export default class Matrix {
     const prod = this.product(transp);
     const { determinant, matrix: dst } = prod.gaussJordanInverse();
     return { determinant, matrix: transp.product(dst) };
-  }
+  },
 
   /**
    * Compute the Gauss-Jordan Inverse of a Square Matrix
@@ -106,8 +89,8 @@ export default class Matrix {
       throw new Error('Gauss-Jordan inversion: Cannot invert Non-square matrix');
     }
     let determinant = 1;
-    const mat = new Matrix(this.nrows, this.ncols * 2);
-    const newMat = new Matrix(this.nrows, this.ncols * 2);
+    const mat = Matrix(this.nrows, this.ncols * 2);
+    const newMat = Matrix(this.nrows, this.ncols * 2);
     const n = this.nrows;
 
     // Create matrix
@@ -150,14 +133,14 @@ export default class Matrix {
       mat.data = newMat.data.slice();
     }
 
-    const dst = new Matrix(this.nrows, this.ncols);
+    const dst = Matrix(this.nrows, this.ncols);
     for (let i = 0; i < n; i += 1) {
       for (let j = 0; j < n; j += 1) {
         dst.data[(i * n) + j] = mat.data[(i * 2 * n) + n + j];
       }
     }
     return { determinant, matrix: dst };
-  }
+  },
 
   /**
    * Swap 2 lines of the matrix
@@ -170,7 +153,7 @@ export default class Matrix {
       this.data[(i * this.ncols) + k] = this.data[(j * this.ncols) + k];
       this.data[(j * this.ncols) + k] = tmp;
     }
-  }
+  },
 
   /**
    * Swap 2 columns of the matrix
@@ -183,5 +166,17 @@ export default class Matrix {
       this.data[(k * this.ncols) + i] = this.data[(k * this.ncols) + j];
       this.data[(k * this.ncols) + j] = tmp;
     }
-  }
+  },
+};
+
+export default function Matrix(nrows = 0, ncols = -1) {
+  const nc = ncols < 0 ? nrows : ncols;
+  return Object.assign(
+    Object.create(matrixPrototype), //
+    {
+      nrows,
+      ncols: nc,
+      data: Array(nrows * nc).fill(0),
+    },
+  );
 }

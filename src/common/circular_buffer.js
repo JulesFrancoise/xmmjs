@@ -1,20 +1,4 @@
-/**
- * Circular Buffer Data Structure
- */
-export default class CircularBuffer {
-  /**
-   * Constructor
-   * @param  {number} capacity Buffer capacity
-   */
-  constructor(capacity) {
-    /**
-     * Buffer capacity
-     * @type {number}
-     */
-    this.capacity = capacity;
-    this.clear();
-  }
-
+const circularBufferPrototype = {
   /**
    * Clear the buffer contents
    */
@@ -39,7 +23,7 @@ export default class CircularBuffer {
      * @type {Array}
      */
     this.buffer = [];
-  }
+  },
 
   /**
    * Push a value to the buffer
@@ -54,7 +38,7 @@ export default class CircularBuffer {
       this.length += 1;
       this.full = (this.length === this.capacity);
     }
-  }
+  },
 
   /**
    * Get the value at a given index
@@ -63,7 +47,7 @@ export default class CircularBuffer {
    */
   get(idx) {
     return this.buffer[(idx + this.index) % this.capacity];
-  }
+  },
 
   /**
    * Fill the buffer with a constant value
@@ -74,7 +58,7 @@ export default class CircularBuffer {
     this.index = 0;
     this.full = true;
     this.buffer = Array(this.capacity).fill(value);
-  }
+  },
 
   /**
    * Iterate over the buffer's data
@@ -85,7 +69,7 @@ export default class CircularBuffer {
     for (let i = 0; i < this.length; i += 1) {
       callback(this.buffer[(i + this.index) % this.capacity], i);
     }
-  }
+  },
 
   /**
    * Get an array of the buffer current values (ordered)
@@ -94,5 +78,20 @@ export default class CircularBuffer {
   values() {
     return this.buffer.slice(this.index)
       .concat(this.buffer.slice(0, this.index));
-  }
+  },
+};
+
+/**
+ * Circular Buffer Data Structure (any data type)
+ * @param  {number} capacity Buffer capacity
+ */
+export default function CircularBuffer(capacity) {
+  const buffer = Object.assign(
+    Object.create(circularBufferPrototype),
+    {
+      capacity,
+    },
+  );
+  buffer.clear();
+  return buffer;
 }

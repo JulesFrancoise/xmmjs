@@ -1,33 +1,26 @@
-const circularBufferPrototype = {
+/**
+ * Circular Buffer prototype
+ *
+ * @property {number}  capacity Buffer capacity
+ * @property {number}  length Current buffer length
+ * @property {boolean} full Specifies if the buffer is full
+ *
+ * @ignore
+ */
+const circularBufferPrototype = /** @lends CircularBuffer */ {
   /**
    * Clear the buffer contents
    */
   clear() {
-    /**
-     * Current buffer length
-     * @type {Number}
-     */
     this.length = 0;
-    /**
-     * Current index
-     * @type {Number}
-     */
     this.index = 0;
-    /**
-     * Specifies if the buffer is already full
-     * @type {Boolean}
-     */
     this.full = false;
-    /**
-     * Buffer data
-     * @type {Array}
-     */
     this.buffer = [];
   },
 
   /**
    * Push a value to the buffer
-   * @param  {any} value data value (any type)
+   * @param  {*} value data value (any type)
    */
   push(value) {
     if (this.full) {
@@ -51,7 +44,7 @@ const circularBufferPrototype = {
 
   /**
    * Fill the buffer with a constant value
-   * @param  {any} value data value (any type)
+   * @param  {*} value data value (any type)
    */
   fill(value) {
     this.length = this.capacity;
@@ -84,14 +77,16 @@ const circularBufferPrototype = {
 /**
  * Circular Buffer Data Structure (any data type)
  * @param  {number} capacity Buffer capacity
+ * @return {circularBufferPrototype}
+ * @function
+ *
+ * @property {number}  capacity Buffer capacity
+ * @property {number}  length Current buffer length
+ * @property {boolean} full Specifies if the buffer is full
  */
 export default function CircularBuffer(capacity) {
-  const buffer = Object.assign(
-    Object.create(circularBufferPrototype),
-    {
-      capacity,
-    },
-  );
+  const buffer = Object.create(circularBufferPrototype);
+  buffer.capacity = capacity;
   buffer.clear();
   return buffer;
 }

@@ -2,7 +2,7 @@ import test from 'ava';
 import Phrase from '../src/training_set/phrase';
 
 test('Create a phrase with default parameters', (t) => {
-  const p = new Phrase();
+  const p = Phrase();
   t.false(p.bimodal);
   t.is(p.dimension, 1);
   t.is(p.inputDimension, 1);
@@ -16,7 +16,7 @@ test('Push data to a unimodal phrase', (t) => {
     Array(100),
     () => [Math.random(), Math.random(), Math.random()],
   );
-  const p = new Phrase({
+  const p = Phrase({
     inputDimension: 3,
   });
   data.forEach((frame) => {
@@ -35,7 +35,7 @@ test('Push data to a bimodal phrase', (t) => {
     Array(2),
     () => [Math.random(), Math.random(), Math.random(), Math.random()],
   );
-  const p = new Phrase({
+  const p = Phrase({
     inputDimension: 2,
     outputDimension: 2,
     columnNames: ['x', 'y', 'a', 'b'],
@@ -59,7 +59,7 @@ test('Mean, std and minmax are correctly computed', (t) => {
     Array(100000),
     () => [Math.random(), Math.random(), Math.random(), Math.random()],
   );
-  const p = new Phrase({
+  const p = Phrase({
     inputDimension: 2,
     outputDimension: 2,
   });

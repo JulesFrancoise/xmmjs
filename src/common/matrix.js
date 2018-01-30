@@ -1,26 +1,22 @@
 /* eslint-disable no-use-before-define */
 const kEpsilonPseudoInverse = 1.0e-9;
 
-const matrixPrototype = {
+/**
+ * Matrix Prototype
+ * @type {Object}
+ * @property {Array} data Matrix data
+ * @property {Number} ncols Number of columns
+ * @property {Number} nrows Number of rows
+ *
+ * @ignore
+ */
+const matrixPrototype = /** @lends Matrix */ {
   /**
    * Compute the Sum of the matrix
    * @return {Number} Sum of all elements in the matrix
    */
   sum() {
     return this.data.reduce((a, b) => a + b, 0);
-  },
-
-  /**
-   * Pretty-Print the matrix
-   */
-  print() {
-    for (let i = 0; i < this.nrows; i += 1) {
-      let line = '';
-      for (let j = 0; j < this.ncols; j += 1) {
-        line += `${this.data[(i * this.ncols) + j]} `.padStart(10);
-      }
-      console.log(line); // eslint-disable-line no-console
-    }
   },
 
   /**
@@ -83,6 +79,7 @@ const matrixPrototype = {
   /**
    * Compute the Gauss-Jordan Inverse of a Square Matrix
    * !!! Determinant (computed with the inversion
+   * @private
    */
   gaussJordanInverse() {
     if (this.nrows !== this.ncols) {
@@ -146,6 +143,7 @@ const matrixPrototype = {
    * Swap 2 lines of the matrix
    * @param  {[type]} i index of the first line
    * @param  {[type]} j index of the second line
+   * @private
    */
   swapLines(i, j) {
     for (let k = 0; k < this.ncols; k += 1) {
@@ -159,6 +157,7 @@ const matrixPrototype = {
    * Swap 2 columns of the matrix
    * @param  {[type]} i index of the first column
    * @param  {[type]} j index of the second column
+   * @private
    */
   swapColumns(i, j) {
     for (let k = 0; k < this.nrows; k += 1) {
@@ -169,6 +168,18 @@ const matrixPrototype = {
   },
 };
 
+/**
+ * Create a matrix
+ *
+ * @function
+ * @param       {Number} [nrows=0]  Number of rows
+ * @param       {Number} [ncols=-1] Number of columns
+ * @return {matrixPrototype}
+ *
+ * @property {Array} data Matrix data
+ * @property {Number} ncols Number of columns
+ * @property {Number} nrows Number of rows
+ */
 export default function Matrix(nrows = 0, ncols = -1) {
   const nc = ncols < 0 ? nrows : ncols;
   return Object.assign(

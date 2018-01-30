@@ -1,4 +1,11 @@
-const trainerPrototype = {
+const trainerPrototype = /** @lends withEMTraining */ {
+  /**
+   * Train the model from the given training set, using the
+   * Expectation-Maximisation algorithm.
+   *
+   * @param  {TrainingSet} trainingSet Training Set
+   * @return {Object} Parameters of the trained model
+   */
   train(trainingSet) {
     if (!trainingSet || trainingSet.empty()) {
       throw new Error('The training set is empty');
@@ -27,6 +34,18 @@ const trainerPrototype = {
     return this.params;
   },
 
+  /**
+   * Return `true` if the training has converged according to the criteria
+   * specified at the creation
+   *
+   * @param  {number} iteration       Current iteration
+   * @param  {number} logProb         Current log-likelihood of the training set
+   * @param  {number} previousLogProb Previous log-likelihood of the training
+   * set
+   * @return {boolean}
+   *
+   * @private
+   */
   converged(iteration, logProb, previousLogProb) {
     if (iteration >= this.convergenceCriteria.maxIterations) return true;
     if (this.convergenceCriteria.maxIterations >= this.convergenceCriteria.minIterations) {
@@ -38,6 +57,29 @@ const trainerPrototype = {
   },
 };
 
+/**
+ * Add ABSTRACT training capabilities to a model for which the training process
+ * use the Expectation-Maximisation (EM) algorithm. This is used in particular
+ * for training GMMs and HMMs.
+ *
+ * The final instance needs to implement `initTraining`, `updateTraining` and
+ * `terminateTraining` methods. `updateTraining` will be called until the
+ * convergence criteria are met. Convergence depends on
+ * - A minimum number of iterations
+ * - A maximum number of iterations
+ * - A threshold on the relative change of the log-likelihood of the training
+ * data between successive iterations.
+ *
+ * @todo details
+ *
+ * @param  {Object} [o]                   Source object
+ * @param  {Object} [convergenceCriteria] Set of convergence criteria
+ * @param  {number} [convergenceCriteria.percentChange=1e-3] Threshold in % of
+ * the relative change of the log-likelihood, under which the training stops.
+ * @param  {number} [convergenceCriteria.minIterations=5]    minimum number of iterations
+ * @param  {number} [convergenceCriteria.maxIterations=100]  maximum number of iterations
+ * @return {Object}
+ */
 export default function withEMTraining(
   o,
   convergenceCriteria = {

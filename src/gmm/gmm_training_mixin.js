@@ -2,7 +2,16 @@ import ModelBase from '../core/model_base_mixin';
 import withKMeansTraining from '../kmeans/kmeans_training_mixin';
 import GaussianDistribution from '../common/gaussian_distribution';
 
-const gmmTrainerPrototype = {
+/**
+ * GMM Training Prototype
+ * @type {Object}
+ * @ignore
+ */
+const gmmTrainerPrototype = /** @lends withGMMTraining */ {
+  /**
+   * Initialize the EM Training process
+   * @param  {TrainingSet} trainingSet Training set
+   */
   initTraining(trainingSet) {
     this.allocate();
     this.initParametersToDefault(trainingSet.standardDeviation());
@@ -12,6 +21,10 @@ const gmmTrainerPrototype = {
     this.updateInverseCovariances();
   },
 
+  /**
+   * Allocate the training variables
+   * @private
+   */
   allocate() {
     this.params.components = Array.from(
       Array(this.params.gaussians),
@@ -22,9 +35,13 @@ const gmmTrainerPrototype = {
       ),
     );
     this.params.mixtureCoeffs = Array(this.params.gaussians).fill(0);
-    this.beta = Array(this.params.gaussians).fill(0);
   },
 
+  /**
+   * Initialize the model parameters to their default values
+   * @param  {Array<Number>} dataStddev Standard deviation of the training data
+   * @private
+   */
   initParametersToDefault(dataStddev) {
     let normCoeffs = 0;
     this.currentRegularization = dataStddev.map(std => Math.max(
@@ -47,6 +64,14 @@ const gmmTrainerPrototype = {
     }
   },
 
+  /**
+   * Initialize the means of the model using a K-Means algorithm
+   *
+   * @see withKMeansTraining
+   *
+   * @param  {TrainingSet} trainingSet training set
+   * @private
+   */
   initMeansWithKMeans(trainingSet) {
     if (!trainingSet || trainingSet.empty()) return;
     const kmeans = withKMeansTraining(
@@ -63,6 +88,12 @@ const gmmTrainerPrototype = {
     }
   },
 
+  /**
+   * Initialize the covariances of the model from the training set
+   *
+   * @param  {TrainingSet} trainingSet training set
+   * @private
+   */
   initCovariances(trainingSet) {
     // TODO: simplify with covariance symmetricity
     // TODO: If Kmeans, covariances from cluster members
@@ -127,12 +158,20 @@ const gmmTrainerPrototype = {
     }
   },
 
+  /**
+   * Regularize the covariances
+   * @private
+   */
   addCovarianceOffset() {
     this.params.components.forEach((c) => {
       c.regularize(this.currentRegularization);
     });
   },
 
+  /**
+   * Update the inverse covariance of each Gaussian component
+   * @private
+   */
   updateInverseCovariances() {
     this.params.components.forEach((c) => {
       c.updateInverseCovariance();
@@ -146,6 +185,10 @@ const gmmTrainerPrototype = {
     }
   },
 
+  /**
+   * Update the EM Training process (1 EM iteration).
+   * @param  TrainingSet trainingSet training set
+   */
   updateTraining(trainingSet) {
     let logProb = 0;
     let totalLength = 0;
@@ -255,6 +298,9 @@ const gmmTrainerPrototype = {
     return logProb;
   },
 
+  /**
+   * Normalize the mixing coefficients of the Gaussian mixture
+   */
   normalizeMixtureCoeffs() {
     let normConst = 0;
     for (let c = 0; c < this.params.gaussians; c += 1) {
@@ -271,9 +317,23 @@ const gmmTrainerPrototype = {
     }
   },
 
+  /**
+   * Terminate the EM Training process
+   */
   terminateTraining() {},
 };
 
+/**
+ * Add GMM Training capabilities to a GMM Model
+ * @param  {GMMBase} o               Source GMM Model
+ * @param  {Number} [gaussians=1]    Number of Gaussian components
+ * @param  {Object} [regularization] Regularization parameters
+ * @param  {Number} [regularization.absolute=1e-3] Absolute regularization
+ * @param  {Number} [regularization.relative=1e-2] Relative Regularization
+ (relative to the training set's variance along each dimension)
+ * @param  {String} [covarianceMode='full'] Covariance mode ('full' or diagonal)
+ * @return {BMMBase}
+ */
 export default function withGMMTraining(
   o,
   gaussians = 1,

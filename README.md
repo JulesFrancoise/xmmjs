@@ -18,7 +18,7 @@ TODO: basic usage.
 
 ```js
 // Create a training set to host the training data
-const ts = new TrainingSet({ inputDimension: 3 });
+const ts = TrainingSet({ inputDimension: 3 });
 
 // Add a new phrase to the training set, and record data frames
 ts.push(0, 'default');

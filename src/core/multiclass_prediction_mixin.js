@@ -1,6 +1,13 @@
 import { isBaseModel } from './model_base_mixin';
 
-const MulticlassPredictionBasePrototype = {
+/**
+ * Multiclass prediction mixin
+ * @type {Object}
+ * @ignore
+ */
+const MulticlassPredictionBasePrototype =
+/** @lends withMulticlassPrediction */
+{
   reset() {
     Object.values(this.models).forEach(m => m.reset());
     this.results = {
@@ -86,6 +93,17 @@ const MulticlassPredictionBimodalPrototype = {
   },
 };
 
+/**
+ * Add multiclass prediction capabilities to a multiclass model
+ * @param  {MulticlassModelBase} o Source model
+ * @param  {String} [multiClassRegressionEstimator='likeliest'] Type of
+ * regression estimator:
+ * - `likeliest` selects the output values from the likeliest class
+ * - `mixture` computes the output values as the weighted sum of the
+ * contributions of each class, weighed by their normalized likelihood
+ * @return {MulticlassPredictionBasePrototype}
+ * @function
+ */
 export default function withMulticlassPrediction(o, multiClassRegressionEstimator = 'likeliest') {
   if (!isBaseModel(o)) {
     throw new Error('The base object must include a standard set of parameters (`params` key), @see `ModelBase`.');

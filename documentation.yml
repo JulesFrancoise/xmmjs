@@ -1,0 +1,6 @@
+toc:
+  - CircularBuffer
+  - Matrix
+  - GaussianDistribution
+  - euclidean
+  - ModelBase

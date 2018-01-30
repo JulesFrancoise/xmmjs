@@ -5,7 +5,7 @@ import { trainGMM, trainMulticlassGMM } from '../src/train';
 import { GMMPredictor, multiclassGMMPredictor } from '../src/predict';
 
 test('GMM Training and decoding output ~constistent~ results', (t) => {
-  const ts = new TrainingSet({ inputDimension: 3 });
+  const ts = TrainingSet({ inputDimension: 3 });
   ts.push(0, 'default');
   for (let i = 0; i < 20000; i += 1) {
     const frame = Array.from(Array(3), () => 0);
@@ -36,7 +36,7 @@ test('GMM Training and decoding output ~constistent~ results', (t) => {
 });
 
 test('Multiclass GMM Training and decoding output ~constistent~ results', (t) => {
-  const ts = new TrainingSet({ inputDimension: 3 });
+  const ts = TrainingSet({ inputDimension: 3 });
   ts.push(0, 'un');
   for (let i = 0; i < 2000; i += 1) {
     const frame = Array.from(Array(3), () => 0);
@@ -71,7 +71,7 @@ test('Multiclass GMM Training and decoding output ~constistent~ results', (t) =>
 });
 
 test('Multiclass GMM with actual data', (t) => {
-  const ts = new TrainingSet({ inputDimension: 6 });
+  const ts = TrainingSet({ inputDimension: 6 });
   const phrases = ['un', 'deux', 'trois'].map((label, i) => {
     ts.push(i, label);
     const input = readFileSync(`./test/data/gmm_phrase_${i + 1}.txt`, 'utf8')

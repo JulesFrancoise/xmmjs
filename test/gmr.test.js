@@ -5,7 +5,7 @@ import { trainGMM, trainMulticlassGMM } from '../src/train';
 import { GMMPredictor, multiclassGMMPredictor } from '../src/predict';
 
 test('GMR Training and decoding output ~constistent~ results', (t) => {
-  const ts = new TrainingSet({ inputDimension: 2, outputDimension: 2 });
+  const ts = TrainingSet({ inputDimension: 2, outputDimension: 2 });
   ts.push(0, 'default');
   for (let i = 0; i < 20000; i += 1) {
     const frame = [
@@ -34,7 +34,7 @@ test('GMR Training and decoding output ~constistent~ results', (t) => {
 });
 
 test('GMR with actual data', (t) => {
-  const ts = new TrainingSet({ inputDimension: 1, outputDimension: 1 });
+  const ts = TrainingSet({ inputDimension: 1, outputDimension: 1 });
   ts.push(0);
   const input = readFileSync('./test/data/gmr_input.txt', 'utf8')
     .split('\n')

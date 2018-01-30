@@ -6,6 +6,29 @@ import withGMMTraining from './gmm/gmm_training_mixin';
 import MulticlassModelbase from './core/multiclass_mixin';
 import withMulticlassTraining from './core/multiclass_training_mixin';
 
+/**
+ * @typedef {Object} GMMParameters
+ * @property {Boolean} bimodal Specifies if the model is bimodal
+ * @property {Number} inputDimension Dimension of the input modality
+ * @property {Number} outputDimension Dimension of the output modality
+ * @property {Number} dimension Total dimension
+ * @property {Number} gaussians Number of gaussian components in the mixture
+ * @property {String} covarianceMode Covariance mode ('full' or 'diagonal')
+ * @property {Array<Number>} mixtureCoeffs mixture coefficients ('weight' of
+ * each gaussian component)
+ * @property {Array<GaussianDistribution>} components Gaussian components
+ */
+
+/**
+ * Train a K-Means model.
+ *
+ * @todo K-Means details
+ *
+ * @param  {TrainingSet} trainingSet           training set
+ * @param  {number} clusters                   Number of clusters
+ * @param  {Object} [trainingConfig=undefined] Training configuration
+ * @return {Object}                            K-Means parameters
+ */
 export function trainKmeans(
   trainingSet,
   clusters,
@@ -23,6 +46,17 @@ export function trainKmeans(
   return model.train(trainingSet);
 }
 
+/**
+ * Train a single-class GMM Model.
+ *
+ * @todo GMM details
+ *
+ * @param  {TrainingSet} trainingSet                training set
+ * @param  {Object} configuration                   Training configuration
+ * @param  {Object} [convergenceCriteria=undefined] Convergence criteria of the
+ * EM algorithm
+ * @return {GMMParameters} Parameters of the trained GMM
+ */
 export function trainGMM(
   trainingSet,
   configuration,
@@ -46,6 +80,17 @@ export function trainGMM(
   return model.train(trainingSet);
 }
 
+/**
+ * Train a multi-class GMM Model.
+ *
+ * @todo GMM details
+ *
+ * @param  {TrainingSet} trainingSet                training set
+ * @param  {Object} configuration                   Training configuration
+ * @param  {Object} [convergenceCriteria=undefined] Convergence criteria of the
+ * EM algorithm
+ * @return {Object} Parameters of the trained GMM
+ */
 export function trainMulticlassGMM(
   trainingSet,
   configuration,

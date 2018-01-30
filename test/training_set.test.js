@@ -2,7 +2,7 @@ import test from 'ava';
 import TrainingSet from '../src/training_set';
 
 test('Create a training set with default parameters', (t) => {
-  const ts = new TrainingSet();
+  const ts = TrainingSet();
   t.is(ts.bimodal, false);
   t.is(ts.inputDimension, 1);
   t.is(ts.outputDimension, 0);
@@ -22,7 +22,7 @@ test('Create a training set with default parameters', (t) => {
 });
 
 test('Create a unimodal training set', (t) => {
-  const ts = new TrainingSet({
+  const ts = TrainingSet({
     inputDimension: 2,
     outputDimension: 3,
     columnNames: ['x', 'y', 'z', 'a', 'b'],

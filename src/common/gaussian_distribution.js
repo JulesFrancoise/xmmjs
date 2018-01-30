@@ -1,7 +1,25 @@
 import Matrix from './matrix';
-import { Ellipse } from './ellipse';
 
-const baseGaussianPrototype = {
+/**
+ * Gaussian Distribution Prototype
+ *
+ * @type {Object}
+ * @property {boolean} bimodal           Specifies if the distribution is
+ * bimodal (for regression use)
+ * @property {number}  inputDimension    input dimension
+ * @property {number}  outputDimension   output dimension
+ * @property {number}  dimension         Total dimension
+ * @property {Array}   mean              Distribution mean
+ * @property {Array}   covariance        Distribution covariance
+ * @property {Array}   inverseCovariance Inverse covariance
+ *
+ * @ignore
+ */
+const baseGaussianPrototype = /** @lends GaussianDistribution */ {
+  /**
+   * Allocate the distribution
+   * @private
+   */
   allocate() {
     this.mean = new Array(this.dimension).fill(0);
     if (this.covarianceMode === 'full') {
@@ -17,9 +35,14 @@ const baseGaussianPrototype = {
   },
 
   /**
-   * Get Likelihood of a data vector
-   * @param {Array} observation data observation
-   * @return {Number} likelihood
+   * @brief Estimate the likelihood of an observation vector.
+   *
+   * If the distribution is bimodal an the observation is a vector of the size
+   * of the input modality, the likelihood is computed only on the
+   * distribution for the input modality
+   *
+   * @param  {array} observation data observation
+   * @return {number}
    */
   likelihood(observation) {
     if (this.covarianceDeterminant === 0) {
@@ -60,6 +83,13 @@ const baseGaussianPrototype = {
     return p;
   },
 
+  /**
+   * Regularize the distribution, given a regularization vector of the same
+   * dimension. Regularization adds the vector to the variance of the
+   * distribution.
+   *
+   * @param  {Array} regularization regularization vector
+   */
   regularize(regularization) {
     if (this.covarianceMode === 'full') {
       for (let d = 0; d < this.dimension; d += 1) {
@@ -72,6 +102,10 @@ const baseGaussianPrototype = {
     }
   },
 
+  /**
+   * Update the inverse covariance of the distribution
+   * @private
+   */
   updateInverseCovariance() {
     if (this.covarianceMode === 'full') {
       const covMatrix = Matrix(this.dimension, this.dimension);
@@ -95,12 +129,25 @@ const baseGaussianPrototype = {
     }
   },
 
+  /**
+   * Convert to an ellipse allong two dimensions
+   *
+   * @param  {number} dimension1 first dimension
+   * @param  {number} dimension2 second dimension
+   * @return {Ellipse}
+   */
   toEllipse(dimension1, dimension2) {
     if (dimension1 >= this.dimension || dimension2 >= this.dimension) {
       throw new Error('dimensions out of range');
     }
 
-    const gaussianEllipse = Ellipse();
+    const gaussianEllipse = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      angle: 0,
+    };
     gaussianEllipse.x = this.mean[dimension1];
     gaussianEllipse.y = this.mean[dimension2];
 
@@ -135,6 +182,15 @@ const baseGaussianPrototype = {
     return gaussianEllipse;
   },
 
+  /**
+   * Modify the distribution along two dimensions given the equivalent values
+   * as an Ellipse representation.
+   *
+   * @param  {Ellipse} gaussianEllipse The Ellipse corresponding to the 2D
+   * covariance along the two target dimensions
+   * @param  {number} dimension1      first dimension
+   * @param  {number} dimension2      second dimension
+   */
   fromEllipse(gaussianEllipse, dimension1, dimension2) {
     if (dimension1 >= this.dimension || dimension2 >= this.dimension) {
       throw new Error('dimensions out of range');
@@ -163,7 +219,28 @@ const baseGaussianPrototype = {
   },
 };
 
-const bimodalGaussianPrototype = {
+/**
+ * Bimodal Gaussian Distribution Prototype, for Regression purposes
+ *
+ * @type {Object}
+ * @property {boolean} bimodal           Specifies if the distribution is
+ * bimodal (for regression use)
+ * @property {number}  inputDimension    input dimension
+ * @property {number}  outputDimension   output dimension
+ * @property {number}  dimension         Total dimension
+ * @property {Array}   mean              Distribution mean
+ * @property {Array}   covariance        Distribution covariance
+ * @property {Array}   inverseCovariance Inverse covariance
+ * @property {Array}   inverseCovarianceInput Inverse covariance of the input
+ * modality
+ *
+ * @ignore
+ */
+const bimodalGaussianPrototype = /** @lends GaussianDistribution */ {
+  /**
+   * Allocate the distribution
+   * @private
+   */
   allocateBimodal() {
     if (this.covarianceMode === 'full') {
       this.inverseCovarianceInput = new Array(this.inputDimension ** 2).fill(0);
@@ -172,6 +249,13 @@ const bimodalGaussianPrototype = {
     }
   },
 
+  /**
+   * Estimate the likleihood of an observation for the input modality only.
+   * Called by `likelihood` when relevant.
+   * @param  {Array} inputObservation observation (input modality only)
+   * @return {number}
+   * @private
+   */
   inputLikelihood(inputObservation) {
     if (this.covarianceDeterminantInput === 0) {
       throw new Error('Covariance Matrix of input modality is not invertible');
@@ -204,6 +288,15 @@ const bimodalGaussianPrototype = {
     return p;
   },
 
+  /**
+   * Estimate the output values associated with an input observation by
+   * regression, given the distribution parameters.
+   *
+   * @todo Clarify the maths here.
+   *
+   * @param  {Array} inputObservation observation (input modality only)
+   * @return {Array} Output values
+   */
   regression(inputObservation) {
     const outputDimension = this.dimension - this.inputDimension;
     const prediction = Array(outputDimension).fill(0);
@@ -229,6 +322,10 @@ const bimodalGaussianPrototype = {
     return prediction;
   },
 
+  /**
+   * Update the inverse covariance
+   * @private
+   */
   updateInverseCovarianceBimodal() {
     if (this.covarianceMode === 'full') {
       const covMatrixInput = Matrix(this.inputDimension, this.inputDimension);
@@ -254,6 +351,10 @@ const bimodalGaussianPrototype = {
     this.updateOutputCovariance();
   },
 
+  /**
+   * Update the output covariance
+   * @private
+   */
   updateOutputCovariance() {
     if (this.covarianceMode === 'diagonal') {
       this.outputCovariance = this.covariance.slice(0, this.inputDimension);
@@ -301,13 +402,22 @@ const bimodalGaussianPrototype = {
  * Multivariate Gaussian Distribution factory function.
  * Full covariance, optionally multimodal with support for regression.
  *
- * @param {Boolean} [bimodal=false] specify if the distribution is bimodal
- * for use in regression
- * @param {Number}  [dimension=1] dimension of the distribution
- * @param {Number}  [inputDimension=0] dimension of the input modality in
- * bimodal mode.
- * @param {String}  [covarianceMode='full'] covariance mode (full vs
+ * @function
+ * @param {Number} [inputDimension=1]      Dimension of the input modality
+ * @param {Number} [outputDimension=0]     Dimension of the output
+ * modality (positive for regression, otherwise 0 for recognition).
+ * @param {String} [covarianceMode='full'] covariance mode (full vs
  * diagonal)
+ * @return {baseGaussianPrototype|bimodalGaussianPrototype}
+ *
+ * @property {boolean} bimodal           Specifies if the distribution is
+ * bimodal (for regression use)
+ * @property {number}  inputDimension    input dimension
+ * @property {number}  outputDimension   output dimension
+ * @property {number}  dimension         Total dimension
+ * @property {Array}   mean              Distribution mean
+ * @property {Array}   covariance        Distribution covariance
+ * @property {Array}   inverseCovariance Inverse covariance
  */
 export default function GaussianDistribution(
   inputDimension = 1,

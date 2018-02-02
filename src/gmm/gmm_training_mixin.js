@@ -1,6 +1,5 @@
 import ModelBase from '../core/model_base_mixin';
 import withKMeansTraining from '../kmeans/kmeans_training_mixin';
-import GaussianDistribution from '../common/gaussian_distribution';
 
 /**
  * GMM Training Prototype
@@ -17,24 +16,8 @@ const gmmTrainerPrototype = /** @lends withGMMTraining */ {
     this.initParametersToDefault(trainingSet.standardDeviation());
     this.initMeansWithKMeans(trainingSet);
     this.initCovariances(trainingSet);
-    this.addCovarianceOffset();
+    this.regularize();
     this.updateInverseCovariances();
-  },
-
-  /**
-   * Allocate the training variables
-   * @private
-   */
-  allocate() {
-    this.params.components = Array.from(
-      Array(this.params.gaussians),
-      () => new GaussianDistribution(
-        this.params.inputDimension,
-        this.params.outputDimension,
-        this.params.covarianceMode,
-      ),
-    );
-    this.params.mixtureCoeffs = Array(this.params.gaussians).fill(0);
   },
 
   /**
@@ -80,7 +63,7 @@ const gmmTrainerPrototype = /** @lends withGMMTraining */ {
         outputDimension: this.params.outputDimension,
       }),
       this.params.gaussians,
-      { initialization: 'random' },
+      { initialization: 'data' },
     );
     const kmeansParams = kmeans.train(trainingSet);
     for (let c = 0; c < this.params.gaussians; c += 1) {
@@ -155,33 +138,6 @@ const gmmTrainerPrototype = /** @lends withGMMTraining */ {
             gmeans[(n * this.params.dimension) + d1] ** 2;
         }
       }
-    }
-  },
-
-  /**
-   * Regularize the covariances
-   * @private
-   */
-  addCovarianceOffset() {
-    this.params.components.forEach((c) => {
-      c.regularize(this.currentRegularization);
-    });
-  },
-
-  /**
-   * Update the inverse covariance of each Gaussian component
-   * @private
-   */
-  updateInverseCovariances() {
-    this.params.components.forEach((c) => {
-      c.updateInverseCovariance();
-    });
-    try {
-      this.params.components.forEach((c) => {
-        c.updateInverseCovariance();
-      });
-    } catch (e) {
-      throw new Error('Matrix inversion error: varianceoffset must be too small');
     }
   },
 
@@ -292,29 +248,10 @@ const gmmTrainerPrototype = /** @lends withGMMTraining */ {
       }
     }
 
-    this.addCovarianceOffset();
+    this.regularize();
     this.updateInverseCovariances();
 
     return logProb;
-  },
-
-  /**
-   * Normalize the mixing coefficients of the Gaussian mixture
-   */
-  normalizeMixtureCoeffs() {
-    let normConst = 0;
-    for (let c = 0; c < this.params.gaussians; c += 1) {
-      normConst += this.params.mixtureCoeffs[c];
-    }
-    if (normConst > 0) {
-      for (let c = 0; c < this.params.gaussians; c += 1) {
-        this.params.mixtureCoeffs[c] /= normConst;
-      }
-    } else {
-      for (let c = 0; c < this.params.gaussians; c += 1) {
-        this.params.mixtureCoeffs[c] = 1 / this.params.gaussians;
-      }
-    }
   },
 
   /**

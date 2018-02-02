@@ -33,9 +33,11 @@ const predictionBasePrototype = bimodal => (/** @lends withAbtractPrediction */{
 
   /**
    * Reset the prediction process
+   * @return {Modelbase} the model
    */
   reset() {
     this.likelihoodBuffer.clear();
+    return this;
   },
 
   /**

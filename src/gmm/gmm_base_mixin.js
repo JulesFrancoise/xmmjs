@@ -1,4 +1,5 @@
 import { isBaseModel } from '../core/model_base_mixin';
+import GaussianDistribution from '../common/gaussian_distribution';
 
 /**
  * GMM Base prototype
@@ -6,6 +7,23 @@ import { isBaseModel } from '../core/model_base_mixin';
  * @ignore
  */
 const gmmBasePrototype = /** @lends withGMMBase */ {
+  /**
+   * Allocate the training variables
+   * @private
+   */
+  allocate() {
+    this.params.components = Array.from(
+      Array(this.params.gaussians),
+      () => new GaussianDistribution(
+        this.params.inputDimension,
+        this.params.outputDimension,
+        this.params.covarianceMode,
+      ),
+    );
+    this.params.mixtureCoeffs = Array(this.params.gaussians).fill(0);
+    this.beta = new Array(this.params.gaussians).fill(0);
+  },
+
   /**
    * Compute the likelihood of an observation given the GMM's parameters
    * @param  {Array<Number>} observation Observation vector
@@ -37,6 +55,53 @@ const gmmBasePrototype = /** @lends withGMMBase */ {
     }
     return this.params.mixtureCoeffs[mixtureComponent] *
         this.params.components[mixtureComponent].likelihood(observation);
+  },
+
+  /**
+   * Update the inverse covariance of each Gaussian component
+   * @private
+   */
+  updateInverseCovariances() {
+    this.params.components.forEach((c) => {
+      c.updateInverseCovariance();
+    });
+    try {
+      this.params.components.forEach((c) => {
+        c.updateInverseCovariance();
+      });
+    } catch (e) {
+      throw new Error('Matrix inversion error: varianceoffset must be too small');
+    }
+  },
+
+  /**
+   * Normalize the mixing coefficients of the Gaussian mixture
+   * @private
+   */
+  normalizeMixtureCoeffs() {
+    let normConst = 0;
+    for (let c = 0; c < this.params.gaussians; c += 1) {
+      normConst += this.params.mixtureCoeffs[c];
+    }
+    if (normConst > 0) {
+      for (let c = 0; c < this.params.gaussians; c += 1) {
+        this.params.mixtureCoeffs[c] /= normConst;
+      }
+    } else {
+      for (let c = 0; c < this.params.gaussians; c += 1) {
+        this.params.mixtureCoeffs[c] = 1 / this.params.gaussians;
+      }
+    }
+  },
+
+  /**
+   * Regularize the covariances
+   * @private
+   */
+  regularize() {
+    this.params.components.forEach((c) => {
+      c.regularize(this.currentRegularization);
+    });
   },
 };
 

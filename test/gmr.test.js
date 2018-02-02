@@ -1,8 +1,12 @@
 import test from 'ava';
 import { readFileSync, writeFileSync } from 'fs';
 import TrainingSet from '../src/training_set';
-import { trainGMM, trainMulticlassGMM } from '../src/train';
-import { GMMPredictor, multiclassGMMPredictor } from '../src/predict';
+import {
+  trainGMM,
+  trainMulticlassGMM,
+  GMMPredictor,
+  multiclassGMMPredictor,
+} from '../src/gmm';
 
 test('GMR Training and decoding output ~constistent~ results', (t) => {
   const ts = TrainingSet({ inputDimension: 2, outputDimension: 2 });

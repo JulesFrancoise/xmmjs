@@ -5,7 +5,7 @@ import {
   trainGMM,
   trainMulticlassGMM,
   GMMPredictor,
-  multiclassGMMPredictor,
+  MulticlassGMMPredictor,
 } from '../src/gmm';
 
 test('GMR Training and decoding output ~constistent~ results', (t) => {
@@ -60,7 +60,7 @@ test('GMR with actual data', (t) => {
     covarianceMode: 'full',
   };
   const gmrParams = trainMulticlassGMM(ts, configuration);
-  const predictor = multiclassGMMPredictor(gmrParams);
+  const predictor = MulticlassGMMPredictor(gmrParams);
   predictor.reset();
   const prediction = [];
   let predictionError = 0;

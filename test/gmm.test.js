@@ -5,7 +5,7 @@ import {
   trainGMM,
   trainMulticlassGMM,
   GMMPredictor,
-  multiclassGMMPredictor,
+  MulticlassGMMPredictor,
 } from '../src/gmm';
 
 test('GMM Training and decoding output ~constistent~ results', (t) => {
@@ -62,7 +62,7 @@ test('Multiclass GMM Training and decoding output ~constistent~ results', (t) =>
     covarianceMode: 'full',
   };
   const gmmParams = trainMulticlassGMM(ts, configuration);
-  const predictor = multiclassGMMPredictor(gmmParams);
+  const predictor = MulticlassGMMPredictor(gmmParams);
   predictor.reset();
   predictor.predict([0, 0, 0]);
   t.is(predictor.results.likeliest, 'un');
@@ -96,7 +96,7 @@ test('Multiclass GMM with actual data', (t) => {
     covarianceMode: 'full',
   };
   const gmmParams = trainMulticlassGMM(ts, configuration);
-  const predictor = multiclassGMMPredictor(gmmParams);
+  const predictor = MulticlassGMMPredictor(gmmParams);
   predictor.reset();
   predictor.likelihoodWindow = phrases[0].length;
   phrases[0].forEach((frame) => {

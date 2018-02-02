@@ -50,6 +50,11 @@ const hmmPredictionPrototype = /** @lends withHMMPrediction */ {
   forwardInitialized: false,
   isHierarchical: false,
 
+  /**
+   * Setup the Model by allocating GMM predictors to each of the hidden states
+   * @return {HMMBaseModel} the model
+   * @private
+   */
   setup() {
     this.params.xStates = this.params.xStates.map(s => GMMPredictor(s).reset());
     return this;
@@ -57,6 +62,7 @@ const hmmPredictionPrototype = /** @lends withHMMPrediction */ {
 
   /**
    * Reset the prediction process
+   * @return {HMMBaseModel} the model
    */
   reset() {
     this.likelihoodBuffer.clear();
@@ -88,6 +94,11 @@ const hmmPredictionPrototype = /** @lends withHMMPrediction */ {
     return 1 / ct;
   },
 
+  /**
+   * Update the state probabilities filtering window (for multiclass
+   * hierarchical HMM I think...)
+   * @private
+   */
   updateAlphaWindow() {
     this.results.likeliestState = 0;
     // Get likeliest State
@@ -128,7 +139,7 @@ const hmmPredictionPrototype = /** @lends withHMMPrediction */ {
 const hmmBimodalPredictionPrototype = /** @lends withHMMPrediction */ {
   /**
    * Estimate the output values corresponding to the input observation, by
-   * regression given the HMM's parameters. This method is called Gaussian
+   * regression given the HMM's parameters. This method is called Hidden
    * Mixture Regression (GMR).
    *
    * @param  {Array<Number>} inputObservation Observation on the input modality

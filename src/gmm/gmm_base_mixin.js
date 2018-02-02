@@ -43,7 +43,7 @@ const gmmBasePrototype = /** @lends withGMMBase */ {
   },
 
   /**
-   * Compute the likleihood of an observation for a single component
+   * Compute the likelihood of an observation for a single component
    * @param  {Array<Number>} observation Observation vector
    * @param  {Number} mixtureComponent Component index
    * @return {Number}

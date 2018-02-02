@@ -2,7 +2,7 @@ import ModelBase from '../core/model_base_mixin';
 import withEMTraining from '../core/em_training_mixin';
 import withHMMBase from './hmm_base_mixin';
 import withHMMTraining from './hmm_training_mixin';
-import MulticlassModelbase from '../core/multiclass_mixin';
+import MulticlassModelBase from '../core/multiclass_mixin';
 import withMulticlassTraining from '../core/multiclass_training_mixin';
 import withAbtractPrediction from '../core/prediction_mixin';
 import withHMMPrediction from './hmm_prediction_mixin';
@@ -84,7 +84,7 @@ export function trainMulticlassHMM(
 ) {
   const { inputDimension, outputDimension } = trainingSet;
   const model = withMulticlassTraining(
-    MulticlassModelbase({ inputDimension, outputDimension, ...configuration }),
+    MulticlassModelBase({ inputDimension, outputDimension, ...configuration }),
     ts => trainHMM(ts, configuration, convergenceCriteria),
   );
   return model.train(trainingSet);
@@ -115,11 +115,11 @@ export function HMMPredictor(
  * @param       {number} [likelihoodWindow=undefined] Likelihoow window size
  * @function
  */
-export function multiclassHMMPredictor(
+export function MulticlassHMMPredictor(
   params,
   likelihoodWindow = undefined,
 ) {
-  const model = withMulticlassPrediction(MulticlassModelbase(params));
+  const model = withMulticlassPrediction(MulticlassModelBase(params));
   model.models = {};
   Object.keys(params.classes).forEach((label) => {
     model.models[label] = HMMPredictor(params.classes[label], likelihoodWindow);

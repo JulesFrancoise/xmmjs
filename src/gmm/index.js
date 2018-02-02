@@ -2,7 +2,7 @@ import ModelBase from '../core/model_base_mixin';
 import withEMTraining from '../core/em_training_mixin';
 import withGMMBase from './gmm_base_mixin';
 import withGMMTraining from './gmm_training_mixin';
-import MulticlassModelbase from '../core/multiclass_mixin';
+import MulticlassModelBase from '../core/multiclass_mixin';
 import withMulticlassTraining from '../core/multiclass_training_mixin';
 import withAbtractPrediction from '../core/prediction_mixin';
 import withGMMPrediction from './gmm_prediction_mixin';
@@ -73,7 +73,7 @@ export function trainMulticlassGMM(
 ) {
   const { inputDimension, outputDimension } = trainingSet;
   const model = withMulticlassTraining(
-    MulticlassModelbase({ inputDimension, outputDimension, ...configuration }),
+    MulticlassModelBase({ inputDimension, outputDimension, ...configuration }),
     ts => trainGMM(ts, configuration, convergenceCriteria),
   );
   return model.train(trainingSet);
@@ -104,11 +104,11 @@ export function GMMPredictor(
  * @param       {number} [likelihoodWindow=undefined] Likelihoow window size
  * @function
  */
-export function multiclassGMMPredictor(
+export function MulticlassGMMPredictor(
   params,
   likelihoodWindow = undefined,
 ) {
-  const model = withMulticlassPrediction(MulticlassModelbase(params));
+  const model = withMulticlassPrediction(MulticlassModelBase(params));
   model.models = {};
   Object.keys(params.classes).forEach((label) => {
     model.models[label] = GMMPredictor(params.classes[label], likelihoodWindow);

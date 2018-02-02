@@ -3,10 +3,6 @@ import ModelBase from '../core/model_base_mixin';
 import withGMMBase from '../gmm/gmm_base_mixin';
 import { trainGMM } from '../gmm';
 
-//
-// TODO: change transition to nested arrays
-//
-
 const TRANSITION_REGULARIZATION = 1e-5;
 
 /**
@@ -15,6 +11,10 @@ const TRANSITION_REGULARIZATION = 1e-5;
  * @ignore
  */
 const hmmTrainerPrototype = /** @lends withHMMTraining */ {
+  /**
+   * Initialize the EM Training process
+   * @param  {TrainingSet} trainingSet Training set
+   */
   initTraining(trainingSet) {
     if (!trainingSet || trainingSet.empty()) return;
 
@@ -28,6 +28,11 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     }
   },
 
+  /**
+   * Allocate the model's parameters and training variables
+   * @param  {TrainingSet} trainingSet The training set
+   * @private
+   */
   allocate(trainingSet) {
     const {
       inputDimension,
@@ -99,6 +104,10 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     this.gammaSumPerMixture = new Array(this.params.states * this.params.gaussians).fill(0);
   },
 
+  /**
+   * Update the EM Training process (1 EM iteration).
+   * @param  TrainingSet trainingSet training set
+   */
   updateTraining(trainingSet) {
     let logProb = 0;
 
@@ -140,6 +149,10 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     return logProb;
   },
 
+  /**
+   * terminate the EM Training process
+   * @param  TrainingSet trainingSet training set
+   */
   terminateTraining() {
     this.normalizeTransitions();
     this.gammaSequence = null;
@@ -184,6 +197,12 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     }
   },
 
+  /**
+   * Initialize the means of each state using all available phrases in the
+   * training set
+   * @param  {TrainingSet} trainingSet Training set
+   * @private
+   */
   initMeansWithAllPhrases(trainingSet) {
     if (!trainingSet || trainingSet.empty()) return;
 
@@ -215,6 +234,12 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     }
   },
 
+  /**
+   * Initialize the covariance by direct (fully-observed) estimation from the
+   * training data.
+   * @param  {[type]} trainingSet [description]
+   * @private
+   */
   initCovariancesFullyObserved(trainingSet) {
     if (!trainingSet || trainingSet.empty()) return;
 
@@ -287,6 +312,12 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     }
   },
 
+  /**
+   * Initialize the means and covariance of each state's observation probability
+   * distribution using the Expectation-Maximization algorithm for GMMs
+   * @param  {[type]} trainingSet [description]
+   * @private
+   */
   initMeansCovariancesWithGMMEM(trainingSet) {
     for (let n = 0; n < this.params.states; n += 1) {
       const ts = TrainingSet(this.params);
@@ -313,6 +344,10 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     }
   },
 
+  /**
+   * Initialize the transition matrix to an ergodic transition matrix
+   * @private
+   */
   setErgodic() {
     const p = 1 / this.params.states;
     this.params.prior = new Array(this.params.states).fill(p);
@@ -322,6 +357,10 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     );
   },
 
+  /**
+   * Initialize the transition matrix to a left-right transition matrix
+   * @private
+   */
   setLeftRight() {
     this.params.prior = new Array(this.params.states).fill(0);
     this.params.prior[0] = 1;
@@ -330,6 +369,11 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     this.params.transition[((this.params.states - 1) * 2) + 1] = 0;
   },
 
+  /**
+   * Normalize the hidden state transition parameters
+   * (prior + transition matrix)
+   * @private
+   */
   normalizeTransitions() {
     if (this.params.transitionMode === 'ergodic') {
       const normPrior = this.params.prior.reduce((a, b) => a + b, 0);
@@ -352,12 +396,24 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     }
   },
 
+  /**
+   * Initialize the backward algorithm (see rabiner, 1989)
+   * @param  {Number} ct Inverse probability at time T - 1 (last observation of
+   * the sequence)
+   * @private
+   */
   initializeBackwardAlgorithm(ct) {
     for (let i = 0; i < this.params.states; i += 1) {
       this.beta[i] = ct;
     }
   },
 
+  /**
+   * Initialize the backward algorithm (see rabiner, 1989)
+   * @param  {Number} ct Inverse probability at time t
+   * @param  {Array<Number>} observation Observation vector
+   * @private
+   */
   updateBackwardAlgorithm(ct, observation) {
     this.previousBeta = this.beta.slice();
     for (let i = 0; i < this.params.states; i += 1) {
@@ -385,6 +441,13 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     }
   },
 
+  /**
+   * Forward algorithm update step for the Baum-Welch algorithms. It is similar
+   * to `updateForwardAlgorithm` except it takes precomputed observation
+   * likelihoods as argument.
+   * @param  {Array<Number>} observationLikelihoods observation likelihoods
+   * @private
+   */
   baumWelchForwardUpdate(observationLikelihoods) {
     let normConst = 0;
     this.previousAlpha = this.alpha.slice();
@@ -420,6 +483,14 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     return 0;
   },
 
+  /**
+   * Backward algorithm update step for the Baum-Welch algorithms. It is similar
+   * to `updatebackwardAlgorithm` except it takes precomputed observation
+   * likelihoods as argument.
+   * @param  {Number} ct Inverse probability at time t
+   * @param  {Array<Number>} observationLikelihoods observation likelihoods
+   * @private
+   */
   baumWelchBackwardUpdate(ct, observationLikelihoods) {
     this.previousBeta = this.beta.slice();
     for (let i = 0; i < this.params.states; i += 1) {
@@ -448,6 +519,13 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     }
   },
 
+  /**
+   * Forward-Backward algorithm for the Baum-Welch training algorithm
+   * @param  {Phrase} currentPhrase Current data phrase
+   * @param  {Number} phraseIndex   Current phrase index
+   * @return {Number} Log-likelihood
+   * @private
+   */
   baumWelchForwardBackward(currentPhrase, phraseIndex) {
     const T = currentPhrase.length;
 
@@ -563,6 +641,11 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     return logProb;
   },
 
+  /**
+   * Sums the Gamma variables used for parameter estimation during training
+   * @param  {TrainingSet} trainingSet Training Set
+   * @private
+   */
   baumWelchGammaSum(trainingSet) {
     for (let i = 0; i < this.params.states; i += 1) {
       this.gammaSum[i] = 0;
@@ -587,6 +670,12 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     });
   },
 
+  /**
+   * Estimate the mixture coefficients of the GMM observation probability
+   * distribution at each state.
+   * @param  {TrainingSet} trainingSet Training Set
+   * @private
+   */
   baumWelchEstimateMixtureCoefficients(trainingSet) {
     let phraseIndex = 0;
     trainingSet.forEach((phrase) => {
@@ -607,6 +696,12 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     }
   },
 
+  /**
+   * Estimate the means of the GMM observation probability
+   * distribution at each state.
+   * @param  {TrainingSet} trainingSet Training Set
+   * @private
+   */
   baumWelchEstimateMeans(trainingSet) {
     for (let i = 0; i < this.params.states; i += 1) {
       for (let c = 0; c < this.params.gaussians; c += 1) {
@@ -647,6 +742,12 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     }
   },
 
+  /**
+   * Estimate the covariances of the GMM observation probability
+   * distribution at each state.
+   * @param  {TrainingSet} trainingSet Training Set
+   * @private
+   */
   baumWelchEstimateCovariances(trainingSet) {
     let phraseIndex = 0;
     trainingSet.forEach((phrase) => {
@@ -707,6 +808,11 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     }
   },
 
+  /**
+   * Estimate the prior probabilities of the model
+   * @param  {TrainingSet} trainingSet Training Set
+   * @private
+   */
   baumWelchEstimatePrior(trainingSet) {
     this.params.prior.fill(0);
 
@@ -731,6 +837,11 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     }
   },
 
+  /**
+   * Estimate the transition probabilities of the model
+   * @param  {TrainingSet} trainingSet Training Set
+   * @private
+   */
   baumWelchEstimateTransitions(trainingSet) {
     // Set transition matrix to 0
     this.params.transition = this.params.transitionMode === 'ergodic' ?
@@ -813,11 +924,14 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
 /**
  * Add HMM Training capabilities to a HMM Model
  * @param  {HMMBase} o               Source HMM Model
+ * @param  {Number} [states=1]       Number of hidden states
  * @param  {Number} [gaussians=1]    Number of Gaussian components
  * @param  {Object} [regularization] Regularization parameters
  * @param  {Number} [regularization.absolute=1e-3] Absolute regularization
  * @param  {Number} [regularization.relative=1e-2] Relative Regularization
  (relative to the training set's variance along each dimension)
+ * @param  {String} [transitionMode='ergodic'] Structure of the transition
+ * matrix ('ergodic' or 'left-right').
  * @param  {String} [covarianceMode='full'] Covariance mode ('full' or diagonal)
  * @return {BMMBase}
  */
@@ -826,7 +940,7 @@ export default function withHMMTraining(
   states = 1,
   gaussians = 1,
   regularization = { absolute: 1e-3, relative: 1e-2 },
-  transitionMode = 'ergodic',
+  transitionMode = 'leftright',
   covarianceMode = 'full',
 ) {
   if (!Object.keys(o).includes('params')) {

@@ -10,9 +10,26 @@ import { isBaseModel } from '../core/model_base_mixin';
  * @ignore
  */
 const hmmBasePrototype = /** @lends withHMMBase */ {
+  /**
+   * Specifies if the forward algorithm has been initialized
+   * @type {Boolean}
+   * @private
+   */
   forwardInitialized: false,
+
+  /**
+   * Specifies if the containing multiclass model is isHierarchical
+   * @todo check that
+   * @type {Boolean}
+   * @private
+   */
   isHierarchical: false,
 
+  /**
+   * Initialize the forward algorithm (See rabiner, 1989)
+   * @param  {Array<Number>} observation Observation vector
+   * @return {Number}                    `ct` (inverse likelihood)
+   */
   initializeForwardAlgorithm(observation) {
     let normConst = 0;
     if (this.params.transitionMode === 'ergodic') {
@@ -39,6 +56,11 @@ const hmmBasePrototype = /** @lends withHMMBase */ {
     return 1;
   },
 
+  /**
+   * Update the forward algorithm (See rabiner, 1989)
+   * @param  {Array<Number>} observation Observation vector
+   * @return {Number}                    `ct` (inverse likelihood)
+   */
   updateForwardAlgorithm(observation) {
     let normConst = 0;
     this.previousAlpha = this.alpha.slice();
@@ -69,37 +91,6 @@ const hmmBasePrototype = /** @lends withHMMBase */ {
       return 1 / normConst;
     }
     return 0;
-  },
-
-  updateAlphaWindow() {
-    this.results.likeliestState = 0;
-    // Get likeliest State
-    let bestAlpha = this.isHierarchical ?
-      (this.alphaH[0][0] + this.alphaH[1][0]) : this.alpha[0];
-    for (let i = 1; i < this.params.states; i += 1) {
-      if (this.isHierarchical) {
-        if ((this.alphaH[0][i] + this.alphaH[1][i]) > bestAlpha) {
-          bestAlpha = this.alphaH[0][i] + this.alphaH[1][i];
-          this.results.likeliestState = i;
-        }
-      } else if (this.alpha[i] > bestAlpha) {
-        bestAlpha = this.alpha[i];
-        this.results.likeliestState = i;
-      }
-    }
-
-    // Compute Window
-    this.windowMinindex = this.results.likeliestState - Math.floor(this.params.states / 2);
-    this.windowMaxindex = this.results.likeliestState + Math.floor(this.params.states / 2);
-    this.windowMinindex = (this.windowMinindex >= 0) ? this.windowMinindex : 0;
-    this.windowMaxindex = (this.windowMaxindex <= this.params.states) ?
-      this.windowMaxindex : this.params.states;
-    this.windowNormalizationConstant = 0.0;
-    for (let i = this.windowMinindex; i < this.windowMaxindex; i += 1) {
-      this.windowNormalizationConstant += this.isHierarchical ?
-        (this.alphaH[0][i] + this.alphaH[1][i]) :
-        this.alpha[i];
-    }
   },
 };
 

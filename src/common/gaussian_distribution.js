@@ -250,7 +250,7 @@ const bimodalGaussianPrototype = /** @lends GaussianDistribution */ {
   },
 
   /**
-   * Estimate the likleihood of an observation for the input modality only.
+   * Estimate the likelihood of an observation for the input modality only.
    * Called by `likelihood` when relevant.
    * @param  {Array} inputObservation observation (input modality only)
    * @return {number}

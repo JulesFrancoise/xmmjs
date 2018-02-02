@@ -5,7 +5,7 @@ import {
   trainHMM,
   trainMulticlassHMM,
   HMMPredictor,
-  multiclassHMMPredictor,
+  MulticlassHMMPredictor,
 } from '../src/hmm';
 
 test('Ergodic HMM Training and decoding output constistent results', (t) => {
@@ -99,7 +99,7 @@ test('Multiclass Ergodic HMM Training and decoding output constistent results', 
     covarianceMode: 'full',
   };
   const hmmParams = trainMulticlassHMM(ts, configuration);
-  const predictor = multiclassHMMPredictor(hmmParams);
+  const predictor = MulticlassHMMPredictor(hmmParams);
   predictor.reset();
   predictor.predict([0, 0, 0]);
   t.is(predictor.results.likeliest, 'un');
@@ -136,7 +136,7 @@ test('Multiclass Left-Right HMM Training and decoding output constistent results
     covarianceMode: 'full',
   };
   const hmmParams = trainMulticlassHMM(ts, configuration);
-  const predictor = multiclassHMMPredictor(hmmParams);
+  const predictor = MulticlassHMMPredictor(hmmParams);
   predictor.reset();
   predictor.predict([0, 0, 0]);
   t.is(predictor.results.likeliest, 'un');
@@ -172,7 +172,7 @@ test('Multiclass Ergodic HMM with actual data', (t) => {
     covarianceMode: 'full',
   };
   const hmmParams = trainMulticlassHMM(ts, configuration);
-  const predictor = multiclassHMMPredictor(hmmParams);
+  const predictor = MulticlassHMMPredictor(hmmParams);
   predictor.reset();
   predictor.likelihoodWindow = phrases[0].length;
   phrases[0].forEach((frame) => {
@@ -225,7 +225,7 @@ test('Multiclass Left-right HMM with actual data', (t) => {
     covarianceMode: 'full',
   };
   const hmmParams = trainMulticlassHMM(ts, configuration);
-  const predictor = multiclassHMMPredictor(hmmParams);
+  const predictor = MulticlassHMMPredictor(hmmParams);
   predictor.reset();
   predictor.likelihoodWindow = phrases[0].length;
   phrases[0].forEach((frame) => {

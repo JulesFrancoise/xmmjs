@@ -6,7 +6,7 @@ import {
   trainHMM,
   HMMPredictor,
   trainMulticlassHMM,
-  multiclassHMMPredictor,
+  MulticlassHMMPredictor,
 } from '../src/hmm';
 
 test('Ergodic HMR Training and decoding output constistent results', (t) => {
@@ -99,7 +99,7 @@ test('Multiclass ergodic HMR with actual data', (t) => {
     covarianceMode: 'full',
   };
   const hmrParams = trainMulticlassHMM(ts, configuration);
-  const predictor = multiclassHMMPredictor(hmrParams);
+  const predictor = MulticlassHMMPredictor(hmrParams);
   predictor.reset();
   const prediction = [];
   let predictionError = 0;
@@ -141,7 +141,7 @@ test('Multiclass Left-Right HMR with actual data', (t) => {
     covarianceMode: 'full',
   };
   const hmrParams = trainMulticlassHMM(ts, configuration);
-  const predictor = multiclassHMMPredictor(hmrParams);
+  const predictor = MulticlassHMMPredictor(hmrParams);
   predictor.reset();
   const prediction = [];
   let predictionError = 0;

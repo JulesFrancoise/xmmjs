@@ -1,0 +1,57 @@
+toc:
+  - name: Introduction
+    file: README.md
+  - name: Managing Training Data
+    description: |
+      Because we need to.
+  - TrainingSet
+  - Phrase
+  - name: Gaussian Mixture Models (GMMs)
+    description: |
+      Gaussian Mixture Models (GMMs) are great.
+  - trainGMM
+  - GMMPredictor
+  - trainMulticlassGMM
+  - MulticlassGMMPredictor
+  - GMMParameters
+  - name: Hidden Markov Models (HMMs)
+    description: |
+      Hidden Markov Models (HMMs) are great.
+  - trainHMM
+  - HMMPredictor
+  - trainMulticlassHMM
+  - MulticlassHMMPredictor
+  - HMMParameters
+  - name: K-Means Clustering
+    description: |
+      Used to make the initial estimate of a GMM's parameters.
+  - trainKmeans
+  - name: HMMs Internals
+    description: |
+      Hidden Markov Models (HMMs) are great.
+  - withHMMBase
+  - withHMMTraining
+  - withHMMPrediction
+  - name: GMMs Internals
+    description: |
+      Gaussian Mixture Models (GMMs) are great.
+  - withGMMBase
+  - withGMMTraining
+  - withGMMPrediction
+  - name: Common functions and data structures
+    description: |
+      Just some utilities
+  - euclidean
+  - CircularBuffer
+  - GaussianDistribution
+  - Matrix
+  - validateParameters
+  - name: Core Model Mixins and Factory Functions
+    description: |
+      Just some utilities
+  - ModelBase
+  - withEMTraining
+  - withAbtractPrediction
+  - MulticlassModelBase
+  - withMulticlassTraining
+  - withMulticlassPrediction

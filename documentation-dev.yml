@@ -21,6 +21,7 @@ toc:
   - HMMPredictor
   - trainMulticlassHMM
   - MulticlassHMMPredictor
+  - HierarchicalHMMPredictor
   - HMMParameters
   - name: K-Means Clustering
     description: |

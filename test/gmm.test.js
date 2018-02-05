@@ -98,7 +98,7 @@ test('Multiclass GMM with actual data', (t) => {
   const gmmParams = trainMulticlassGMM(ts, configuration);
   const predictor = MulticlassGMMPredictor(gmmParams);
   predictor.reset();
-  predictor.likelihoodWindow = phrases[0].length;
+  predictor.setLikelihoodWindow(phrases[0].length);
   phrases[0].forEach((frame) => {
     predictor.predict(frame);
   });
@@ -110,7 +110,7 @@ test('Multiclass GMM with actual data', (t) => {
   t.true(r1.instantLikelihood > r3.instantLikelihood);
   t.true(r1.logLikelihood > r2.logLikelihood);
   t.true(r1.logLikelihood > r3.logLikelihood);
-  predictor.likelihoodWindow = phrases[1].length;
+  predictor.setLikelihoodWindow(phrases[1].length);
   phrases[1].forEach((frame) => {
     predictor.predict(frame);
   });

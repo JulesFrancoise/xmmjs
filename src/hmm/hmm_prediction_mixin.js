@@ -80,10 +80,15 @@ const hmmPredictionPrototype = /** @lends withHMMPrediction */ {
       this.updateForwardAlgorithm(observation) :
       this.initializeForwardAlgorithm(observation);
     this.updateAlphaWindow();
+    this.updateProgress();
+    return 1 / ct;
+  },
+
+  updateProgress() {
     this.results.progress = 0.0;
     for (let i = this.windowMinindex; i < this.windowMaxindex; i += 1) {
       if (this.isHierarchical) {
-        this.results.progress += (this.alphaH[0][i] + this.alphaH[1][i] + this.alphaH[2][i]) *
+        this.results.progress += (this.alpha[i] + this.alpha1[i] + this.alpha2[i]) *
           (i / this.windowNormalizationConstant);
       } else {
         this.results.progress += (this.alpha[i] * i) /
@@ -91,7 +96,6 @@ const hmmPredictionPrototype = /** @lends withHMMPrediction */ {
       }
     }
     this.results.progress /= this.params.states - 1;
-    return 1 / ct;
   },
 
   /**
@@ -103,11 +107,12 @@ const hmmPredictionPrototype = /** @lends withHMMPrediction */ {
     this.results.likeliestState = 0;
     // Get likeliest State
     let bestAlpha = this.isHierarchical ?
-      (this.alphaH[0][0] + this.alphaH[1][0]) : this.alpha[0];
+      (this.alpha[0] + this.alpha1[0]) :
+      this.alpha[0];
     for (let i = 1; i < this.params.states; i += 1) {
       if (this.isHierarchical) {
-        if ((this.alphaH[0][i] + this.alphaH[1][i]) > bestAlpha) {
-          bestAlpha = this.alphaH[0][i] + this.alphaH[1][i];
+        if ((this.alpha[i] + this.alpha1[i]) > bestAlpha) {
+          bestAlpha = this.alpha[i] + this.alpha1[i];
           this.results.likeliestState = i;
         }
       } else if (this.alpha[i] > bestAlpha) {
@@ -125,7 +130,7 @@ const hmmPredictionPrototype = /** @lends withHMMPrediction */ {
     this.windowNormalizationConstant = 0.0;
     for (let i = this.windowMinindex; i < this.windowMaxindex; i += 1) {
       this.windowNormalizationConstant += this.isHierarchical ?
-        (this.alphaH[0][i] + this.alphaH[1][i]) :
+        (this.alpha[i] + this.alpha1[i]) :
         this.alpha[i];
     }
   },
@@ -173,21 +178,21 @@ const hmmBimodalPredictionPrototype = /** @lends withHMMPrediction */ {
       for (let d = 0; d < this.params.outputDimension; d += 1) {
         if (this.isHierarchical) {
           this.results.outputValues[d] +=
-            (this.alphaH[0][i] + this.alphaH[1][i]) *
+            (this.alpha[i] + this.alpha1[i]) *
             (tmpPredictedOutput[d] / normalizationConstant);
           if (this.params.covarianceMode === 'full') {
             for (let d2 = 0; d2 < this.params.outputDimension; d2 += 1) {
               this.results.outputCovariance[(d * this.params.outputDimension) + d2] +=
-                (this.alphaH[0][i] + this.alphaH[1][i]) *
-                (this.alphaH[0][i] + this.alphaH[1][i]) *
+                (this.alpha[i] + this.alpha1[i]) *
+                (this.alpha[i] + this.alpha1[i]) *
                 (this.params.xStates[i].results
                   .outputCovariance[(d * this.params.outputDimension) + d2] /
                 normalizationConstant);
             }
           } else {
             this.results.outputCovariance[d] +=
-              (this.alphaH[0][i] + this.alphaH[1][i]) *
-              (this.alphaH[0][i] + this.alphaH[1][i]) *
+              (this.alpha[i] + this.alpha1[i]) *
+              (this.alpha[i] + this.alpha1[i]) *
               (this.params.xStates[i].results.outputCovariance[d] /
               normalizationConstant);
           }

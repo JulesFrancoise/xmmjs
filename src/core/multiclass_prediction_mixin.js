@@ -5,9 +5,30 @@ import { isBaseModel } from './model_base_mixin';
  * @type {Object}
  * @ignore
  */
-const MulticlassPredictionBasePrototype =
-/** @lends withMulticlassPrediction */
-{
+const MulticlassPredictionBasePrototype = /** @lends withMulticlassPrediction */ {
+  /**
+   * Likelihood Window (used to smooth the log-likelihoods over several frames)
+   * @return {Number}
+   */
+  getLikelihoodWindow() {
+    return this.likelihoodWindow;
+  },
+
+  /**
+   * Likelihood Window (used to smooth the log-likelihoods over several frames)
+   * @param {Number} [lw] Size (in frames) of the likelihood smoothing window
+   */
+  setLikelihoodWindow(lw) {
+    this.likelihoodWindow = lw;
+    Object.keys(this.models).forEach((label) => {
+      this.models[label].setLikelihoodWindow(lw);
+    });
+  },
+
+  /**
+   * Reset the prediction process. This is particularly important for temporal
+   * models such as HMMs, that depends on previous observations.
+   */
   reset() {
     Object.values(this.models).forEach(m => m.reset());
     this.results = {
@@ -24,6 +45,10 @@ const MulticlassPredictionBasePrototype =
     }
   },
 
+  /**
+   * Make a prediction from a new observation (updates the results member)
+   * @param  {Array<Number>} observation Observation vector
+   */
   predict(observation) {
     Object.values(this.models).forEach(m => m.predict(observation));
     this.updateResults();

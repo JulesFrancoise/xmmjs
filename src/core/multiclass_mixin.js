@@ -11,7 +11,7 @@ const MulticlassBasePrototype = /** @lends MulticlassModelBase */{
    * @return {number} number of classes
    */
   size() {
-    return this.models.size;
+    return Object.keys(this.models).length;
   },
 
   /**

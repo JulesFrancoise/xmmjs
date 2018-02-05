@@ -17,17 +17,10 @@ const predictionBasePrototype = bimodal => (/** @lends withAbtractPrediction */{
 
   /**
    * Likelihood Window (used to smooth the log-likelihoods over several frames)
-   * @return {Number}
-   */
-  get likelihoodWindow() {
-    return this.likelihoodBuffer.capacity;
-  },
-
-  /**
-   * Likelihood Window (used to smooth the log-likelihoods over several frames)
    * @param {Number} [lw] Size (in frames) of the likelihood smoothing window
    */
-  set likelihoodWindow(lw) {
+  setLikelihoodWindow(lw) {
+    this.likelihoodWindow = lw;
     this.likelihoodBuffer = CircularBuffer(lw);
   },
 

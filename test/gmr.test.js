@@ -1,5 +1,5 @@
 import test from 'ava';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import TrainingSet from '../src/training_set';
 import {
   trainGMM,
@@ -71,5 +71,5 @@ test('GMR with actual data', (t) => {
   });
   predictionError /= input.length;
   t.true(predictionError < 0.02);
-  writeFileSync('./test/gmr_prediction.txt', prediction.join('\n'));
+  // writeFileSync('./test/gmr_prediction.txt', prediction.join('\n'));
 });

@@ -6,9 +6,9 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'mars.js',
+    filename: 'xmm.js',
     libraryTarget: 'umd',
-    library: 'mars',
+    library: 'xmm',
   },
   externals: {
     '@most/core': {

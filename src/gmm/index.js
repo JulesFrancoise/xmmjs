@@ -1,3 +1,4 @@
+import GaussianDistribution from '../common/gaussian_distribution';
 import ModelBase from '../core/model_base_mixin';
 import withEMTraining from '../core/em_training_mixin';
 import withGMMBase from './gmm_base_mixin';
@@ -93,6 +94,13 @@ export function GMMPredictor(
     withGMMBase(ModelBase(params)),
     likelihoodWindow,
   ));
+  params.components.forEach((c, i) => {
+    model.params.components[i] = Object.assign(GaussianDistribution(
+      params.inputDimension,
+      params.outputDimension,
+      params.covarianceMode,
+    ), c);
+  });
   model.reset();
   return model;
 }

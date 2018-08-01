@@ -5,12 +5,13 @@
   "author": "Jules Françoise <me@julesfrancoise.com>",
   "license": "MIT",
   "private": true,
-  "main": "dist/xmm.js",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
   "scripts": {
-    "dev": "cross-env BABEL_ENV=build NODE_ENV=development webpack --watch",
-    "build": "cross-env BABEL_ENV=build NODE_ENV=production webpack --progress --hide-modules",
+    "dev": "cross-env BABEL_ENV=build NODE_ENV=development rollup -c -w",
+    "build": "cross-env BABEL_ENV=build NODE_ENV=production rollup -c",
     "lint": "eslint src test",
-    "test": "eslint src test benchmark && BABEL_ENV=test ava",
+    "test": "eslint src test && BABEL_ENV=test ava",
     "test:coverage": "eslint src test && BABEL_ENV=test nyc --all --reporter=html ava --verbose",
     "doc:api": "documentation build src/index.js src/gmm/index.js src/hmm/index.js src/training_set/index.js src/training_set/phrase.js -f html -o docs --sort-order alpha --config documentation.yml --shallow",
     "doc:dev": "documentation build src/** -f html -o docs --sort-order alpha --config documentation-dev.yml"
@@ -20,6 +21,7 @@
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.2.1",
     "babel-loader": "^7.1.2",
+    "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
@@ -28,12 +30,16 @@
     "documentation": "^5.3.5",
     "eslint": "^4.17.0",
     "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-html": "^4.0.2",
-    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-import": "^2.13.0",
     "nyc": "^11.4.1",
     "rimraf": "^2.6.2",
-    "uglifyjs-webpack-plugin": "^1.1.8",
-    "webpack": "^3.10.0"
+    "rollup": "^0.63.5",
+    "rollup-plugin-analyzer": "^2.1.0",
+    "rollup-plugin-babel": "^3.0.7",
+    "rollup-plugin-filesize": "^4.0.1",
+    "rollup-plugin-minify-es": "^1.1.1",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-watch": "^4.3.1"
   },
   "ava": {
     "files": [

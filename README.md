@@ -14,17 +14,15 @@ npm install --save @JulesFrancoise/xmmjs
 
 ## Getting Started
 
-TODO: basic usage.
-
 ```js
 // Create a training set to host the training data
 const ts = TrainingSet({ inputDimension: 3 });
 
 // Add a new phrase to the training set, and record data frames
-ts.push(0, 'default');
+const phrase = ts.push(0, 'default');
 for (let i = 0; i < 1000; i += 1) {
-  const frame = ...; // get data from source
-  ts.getPhrase(0).push(frame);
+  const frame = ...; // get data from somewhere
+  phrase.push(frame);
 }
 
 // Train the GMM with the given configuration

@@ -86,7 +86,7 @@ const phrasePrototype = /** @lends Phrase */ {
     if (!this.bimodal) {
       throw new Error('this phrase is unimodal, use `push`');
     }
-    if (observation.size() !== this.inputDimension) {
+    if (observation.length !== this.inputDimension) {
       throw new Error('Observation has wrong dimension');
     }
 
@@ -105,7 +105,7 @@ const phrasePrototype = /** @lends Phrase */ {
     if (!this.bimodal) {
       throw new Error('this phrase is unimodal, use `push`');
     }
-    if (observation.size() !== this.outputDimension) {
+    if (observation.length !== this.outputDimension) {
       throw new Error('Observation has wrong dimension');
     }
 

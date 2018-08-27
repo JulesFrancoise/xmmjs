@@ -73,3 +73,51 @@ test('GMR with actual data', (t) => {
   t.true(predictionError < 0.02);
   // writeFileSync('./test/gmr_prediction.txt', prediction.join('\n'));
 });
+
+test('GMR with actual data 2x2', (t) => {
+  const ts = TrainingSet({ inputDimension: 3, outputDimension: 2 });
+  for (let i = 0; i < 2; i += 1) {
+    ts.push(i, 'def');
+    const input = readFileSync(`./test/data/gmr_input_${i + 1}.txt`, 'utf8')
+      .split('\n')
+      .filter(l => l !== '')
+      .map(line => line.split(' ').map(x => parseFloat(x)));
+    const output = readFileSync(`./test/data/gmr_output_${i + 1}.txt`, 'utf8')
+      .split('\n')
+      .filter(l => l !== '')
+      .map(line => line.split(' ').map(x => parseFloat(x)));
+    input.forEach((frame, j) => {
+      ts.getPhrase(i).push(frame.concat(output[j]));
+    });
+  }
+  const configuration = {
+    gaussians: 1,
+    regularization: {
+      relative: 0.3,
+      absolute: 0.1,
+    },
+    covarianceMode: 'full',
+  };
+  const gmrParams = trainMulticlassGMM(ts, configuration);
+  const predictor = MulticlassGMMPredictor(gmrParams);
+  predictor.reset();
+  const prediction = [];
+  let predictionError = 0;
+  const input = readFileSync('./test/data/gmr_input_X.txt', 'utf8')
+    .split('\n')
+    .filter(l => l !== '')
+    .map(line => line.split(' ').map(x => parseFloat(x)));
+  const output = readFileSync('./test/data/gmr_output_X.txt', 'utf8')
+    .split('\n')
+    .filter(l => l !== '')
+    .map(line => line.split(' ').map(x => parseFloat(x)));
+  input.forEach((frame, i) => {
+    predictor.predict(frame);
+    prediction.push(predictor.results.outputValues);
+    predictionError += predictor.results.outputValues.reduce((x, y, j) =>
+      Math.abs(output[i][j] - y), 0);
+  });
+  predictionError /= (input.length * 3);
+  t.true(predictionError < 0.001);
+  // writeFileSync('./test/gmr_prediction.txt', prediction.join('\n'));
+});

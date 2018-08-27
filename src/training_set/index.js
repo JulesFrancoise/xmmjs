@@ -100,7 +100,7 @@ const trainingSetPrototype = /** @lends TrainingSet */ {
     const ts = TrainingSet(this); // eslint-disable-line no-use-before-define
     ts.phrases = Object.keys(this.phrases)
       .filter(i => this.phrases[i].label === label)
-      .map(i => ({ i: this.phrases[i] }))
+      .map(i => ({ [i]: this.phrases[i] }))
       .reduce((x, p) => ({ ...x, ...p }), {});
     return ts;
   },

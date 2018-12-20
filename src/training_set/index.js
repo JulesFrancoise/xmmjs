@@ -199,6 +199,19 @@ const trainingSetPrototype = /** @lends TrainingSet */ {
  * @property {Number}  outputDimension Dimension of the output modality
  * @property {Number}  dimension Total dimension
  * @property {Array<String>} columnNames Columns names
+ *
+ * @example
+ * // Create a training dataset for data with 3 channels
+ * const ts = TrainingSet({ inputDimension: 2 });
+ *
+ * // Add a new phrase to the training set, and record data frames
+ * const phrase = ts.push(0, 'default');
+ * for (let i = 0; i < 1000; i += 1) {
+ *   const frame = ...; // get data from somewhere
+ *   phrase.push(frame);
+ * }
+ *
+ * console.log(ts);
  */
 export default function TrainingSet({
   inputDimension = 1,

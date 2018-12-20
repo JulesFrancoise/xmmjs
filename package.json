@@ -13,7 +13,7 @@
     "lint": "eslint src test",
     "test": "eslint src test && BABEL_ENV=test ava",
     "test:coverage": "eslint src test && BABEL_ENV=test nyc --all --reporter=html ava --verbose",
-    "doc:api": "documentation build src/index.js src/gmm/index.js src/hmm/index.js src/training_set/index.js src/training_set/phrase.js -f html -o docs --sort-order alpha --config documentation.yml --shallow",
+    "doc:api": "documentation build src/index.js src/gmm/index.js src/hmm/index.js src/training_set/index.js src/training_set/phrase.js src/common/gaussian_distribution.js -f html -o docs --sort-order alpha --config documentation.yml --shallow",
     "doc:dev": "documentation build src/** -f html -o docs --sort-order alpha --config documentation-dev.yml"
   },
   "devDependencies": {

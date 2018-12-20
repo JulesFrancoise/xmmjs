@@ -1,23 +1,30 @@
 toc:
+  - name: Introduction
+    file: README.md
   - name: Managing Training Data
     description: |
-      Because we need to.
+      TODO: DESCRIPTION
   - TrainingSet
   - Phrase
   - name: Gaussian Mixture Models (GMMs)
     description: |
-      Gaussian Mixture Models (GMMs) are great.
+      TODO: DESCRIPTION
   - trainGMM
   - GMMPredictor
   - trainMulticlassGMM
   - MulticlassGMMPredictor
+  - GMMConfiguration
   - GMMParameters
   - name: Hidden Markov Models (HMMs)
     description: |
-      Hidden Markov Models (HMMs) are great.
+      TODO: DESCRIPTION
   - trainHMM
   - HMMPredictor
   - trainMulticlassHMM
   - MulticlassHMMPredictor
   - HierarchicalHMMPredictor
+  - HMMConfiguration
   - HMMParameters
+  - name: Common Definitions
+  - ConvergenceCriteria
+  - GaussianDistribution

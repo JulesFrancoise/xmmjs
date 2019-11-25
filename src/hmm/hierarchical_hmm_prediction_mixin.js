@@ -7,9 +7,7 @@ const DEFAULT_EXITPROBABILITY_LAST_STATE = 0.1;
  * @type {Object}
  * @ignore
  */
-const hierarchicalHmmPredictionPrototype =
-/** @lends withHierarchicalHMMPrediction */
-{
+const hierarchicalHmmPredictionPrototype = /** @lends withHierarchicalHMMPrediction */ {
   /**
    * Specificies if the forward algorithm has been initialized
    * @type {Boolean}
@@ -45,9 +43,9 @@ const hierarchicalHmmPredictionPrototype =
    * @private
    */
   updateExitProbabilities(exitProbabilities = undefined) {
-    const exitProb = (exitProbabilities !== undefined) ?
-      exitProbabilities :
-      new Array(this.params.states - 1).fill(0)
+    const exitProb = (exitProbabilities !== undefined)
+      ? exitProbabilities
+      : new Array(this.params.states - 1).fill(0)
         .concat([DEFAULT_EXITPROBABILITY_LAST_STATE]);
     Object.keys(this.models).forEach((label) => {
       this.models[label].params.exitProbabilities = exitProb.slice();
@@ -59,7 +57,7 @@ const hierarchicalHmmPredictionPrototype =
    * models such as HMMs, that depends on previous observations.
    */
   reset() {
-    Object.values(this.models).forEach(m => m.reset());
+    Object.values(this.models).forEach((m) => m.reset());
     this.results = {
       labels: [],
       instantLikelihoods: [],
@@ -95,37 +93,36 @@ const hierarchicalHmmPredictionPrototype =
     this.updateResults();
 
     if (this.params.bimodal) {
-      Object.values(this.models).forEach(m => m.regression(observation));
+      Object.values(this.models).forEach((m) => m.regression(observation));
 
       if (this.params.multiClassRegressionEstimator === 'likeliest') {
-        this.results.outputValues =
-          this.models[this.results.likeliest].results.outputValues;
-        this.results.outputCovariance =
-          this.models[this.results.likeliest].results.outputCovariance;
+        this.results.outputValues = this.models[this.results.likeliest]
+          .results.outputValues;
+        this.results.outputCovariance = this.models[this.results.likeliest]
+          .results.outputCovariance;
       } else {
         this.results.outputValues = new Array(this.outputDimension).fill(0);
-        this.results.outputCovariance =
-          new Array(this.params.covarianceMode === 'full' ?
-            this.outputDimension ** 2 :
-            this.outputDimension).fill(0);
-
+        this.results.outputCovariance = new Array(
+          this.params.covarianceMode === 'full'
+            ? this.outputDimension ** 2
+            : this.outputDimension,
+        ).fill(0);
         let modelIndex = 0;
         Object.values(this.models).forEach((model) => {
           for (let d = 0; d < this.outputDimension; d += 1) {
-            this.results.outputValues[d] +=
-              this.results.smoothedNormalizedLikelihoods[modelIndex] *
-              model.second.results.outputValues[d];
+            this.results.outputValues[d] += this.results.smoothedNormalizedLikelihoods[modelIndex]
+              * model.second.results.outputValues[d];
 
             if (this.params.covarianceMode === 'full') {
               for (let d2 = 0; d2 < this.outputDimension; d2 += 1) {
-                this.results.outputCovariance[(d * this.outputDimension) + d2] +=
-                  this.results.smoothedNormalizedLikelihoods[modelIndex] *
-                  model.results.outputCovariance[(d * this.outputDimension) + d2];
+                this.results.outputCovariance[(d * this.outputDimension) + d2]
+                  += this.results.smoothedNormalizedLikelihoods[modelIndex]
+                  * model.results.outputCovariance[(d * this.outputDimension) + d2];
               }
             } else {
-              this.results.outputCovariance[d] +=
-                this.results.smoothedNormalizedLikelihoods[modelIndex] *
-                model.second.results.outputCovariance[d];
+              this.results.outputCovariance[d]
+                += this.results.smoothedNormalizedLikelihoods[modelIndex]
+                * model.second.results.outputCovariance[d];
             }
           }
           modelIndex += 1;
@@ -154,14 +151,13 @@ const hierarchicalHmmPredictionPrototype =
       if (model.params.transitionMode === 'ergodic') {
         model.results.instantLikelihood = 0;
         for (let i = 0; i < N; i += 1) {
-          model.alpha[i] = this.params.prior[modelIndex] *
-            model.params.prior[i] *
-            model.params.xStates[i].likelihood(observation);
+          model.alpha[i] = this.params.prior[modelIndex] * model.params.prior[i]
+            * model.params.xStates[i].likelihood(observation);
           model.results.instantLikelihood += model.alpha[i];
         }
       } else {
-        model.alpha[0] = this.params.prior[modelIndex] *
-          model.params.xStates[0].likelihood(observation);
+        model.alpha[0] = this.params.prior[modelIndex]
+          * model.params.xStates[0].likelihood(observation);
         [model.results.instantLikelihood] = model.alpha;
       }
       normConst += model.results.instantLikelihood;
@@ -214,8 +210,8 @@ const hierarchicalHmmPredictionPrototype =
       if (dstModel.params.transitionMode === 'ergodic') {
         for (let k = 0; k < N; k += 1) {
           for (let j = 0; j < N; j += 1) {
-            front[k] += (dstModel.params.transition[j][k] /
-              (1 - dstModel.params.exitProbabilities[j]))
+            front[k] += (dstModel.params.transition[j][k]
+              / (1 - dstModel.params.exitProbabilities[j]))
               * dstModel.alpha[j];
           }
 
@@ -225,10 +221,10 @@ const hierarchicalHmmPredictionPrototype =
             srcModelIndex += 1
           ) {
             front[k] += dstModel.params.prior[k] * (
-              (this.frontierV1[srcModelIndex] *
-              this.params.transition[srcModelIndex][dstModelIndex]) +
-              (this.params.prior[dstModelIndex] *
-              this.frontierV2[srcModelIndex])
+              (this.frontierV1[srcModelIndex]
+                * this.params.transition[srcModelIndex][dstModelIndex])
+              + (this.params.prior[dstModelIndex]
+                * this.frontierV2[srcModelIndex])
             );
           }
         }
@@ -241,20 +237,18 @@ const hierarchicalHmmPredictionPrototype =
           srcModelIndex < this.size();
           srcModelIndex += 1
         ) {
-          front[0] += (this.frontierV1[srcModelIndex] *
-            this.params.transition[srcModelIndex][dstModelIndex]) +
-            (this.params.prior[dstModelIndex] *
-              this.frontierV2[srcModelIndex]);
+          front[0] += (this.frontierV1[srcModelIndex]
+              * this.params.transition[srcModelIndex][dstModelIndex])
+            + (this.params.prior[dstModelIndex]
+              * this.frontierV2[srcModelIndex]);
         }
 
         // k>0: rest of the primitive
         for (let k = 1; k < N; k += 1) {
-          front[k] += (dstModel.params.transition[k * 2] /
-            (1 - dstModel.params.exitProbabilities[k])) *
-            dstModel.alpha[k];
-          front[k] += (dstModel.params.transition[((k - 1) * 2) + 1] /
-            (1 - dstModel.params.exitProbabilities[k - 1])) *
-            dstModel.alpha[k - 1];
+          front[k] += (dstModel.params.transition[k * 2]
+            / (1 - dstModel.params.exitProbabilities[k])) * dstModel.alpha[k];
+          front[k] += (dstModel.params.transition[((k - 1) * 2) + 1]
+            / (1 - dstModel.params.exitProbabilities[k - 1])) * dstModel.alpha[k - 1];
         }
 
         for (let k = 0; k < N; k += 1) {
@@ -272,20 +266,20 @@ const hierarchicalHmmPredictionPrototype =
       // end of the primitive: handle exit states
       for (let k = 0; k < N; k += 1) {
         tmp = dstModel.params.xStates[k].likelihood(observation) * front[k];
-        dstModel.alpha2[k] = this.params.exitTransition[dstModelIndex] *
-          dstModel.params.exitProbabilities[k] * tmp;
-        dstModel.alpha1[k] = (1 - this.params.exitTransition[dstModelIndex]) *
-          dstModel.params.exitProbabilities[k] * tmp;
+        dstModel.alpha2[k] = this.params.exitTransition[dstModelIndex]
+          * dstModel.params.exitProbabilities[k] * tmp;
+        dstModel.alpha1[k] = (1 - this.params.exitTransition[dstModelIndex])
+          * dstModel.params.exitProbabilities[k] * tmp;
         dstModel.alpha[k] = (1 - dstModel.params.exitProbabilities[k]) * tmp;
 
         dstModel.results.exitLikelihood += dstModel.alpha1[k] + dstModel.alpha2[k];
-        dstModel.results.instantLikelihood += dstModel.alpha[k] +
-          dstModel.alpha1[k] + dstModel.alpha2[k];
+        dstModel.results.instantLikelihood += dstModel.alpha[k]
+          + dstModel.alpha1[k] + dstModel.alpha2[k];
         normConst += tmp;
       }
 
-      dstModel.results.exitRatio = dstModel.results.exitLikelihood /
-        dstModel.results.instantLikelihood;
+      dstModel.results.exitRatio = dstModel.results.exitLikelihood
+        / dstModel.results.instantLikelihood;
 
       dstModelIndex += 1;
     });
@@ -315,9 +309,8 @@ const hierarchicalHmmPredictionPrototype =
         const model = this.models[label];
         likelihoodVector[modelIndex] = 0.0;
         for (let k = 0; k < model.params.states; k += 1) {
-          likelihoodVector[modelIndex] += model.second.alpha[k] +
-            model.second.alpha1[k] +
-            model.second.alpha2[k];
+          likelihoodVector[modelIndex] += model.second.alpha[k]
+            + model.second.alpha1[k] + model.second.alpha2[k];
         }
         modelIndex += 1;
       });

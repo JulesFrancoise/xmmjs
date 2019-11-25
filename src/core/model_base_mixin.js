@@ -44,6 +44,6 @@ export default function ModelBase({
 export function isBaseModel(o) {
   if (!Object.keys(o).includes('params')) return false;
   const keys = ['bimodal', 'inputDimension', 'outputDimension', 'dimension'];
-  return keys.map(key => Object.keys(o.params).includes(key))
+  return keys.map((key) => Object.keys(o.params).includes(key))
     .reduce((a, b) => a && b, true);
 }

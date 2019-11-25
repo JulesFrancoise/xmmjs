@@ -51,7 +51,7 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
         covarianceMode,
       })),
     );
-    this.params.xStates.forEach(s => s.allocate());
+    this.params.xStates.forEach((s) => s.allocate());
     this.alpha = new Array(this.params.states).fill(0);
     this.previousAlpha = new Array(this.params.states).fill(0);
     this.beta = new Array(this.params.states).fill(0);
@@ -85,14 +85,12 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
           () => new Array(this.params.states * 2).fill(0),
         );
       }
-      this.gammaSequenceperMixture[i] =
-        new Array(this.params.gaussians).fill(0);
+      this.gammaSequenceperMixture[i] = new Array(this.params.gaussians).fill(0);
       for (let c = 0; c < this.params.gaussians; c += 1) {
-        this.gammaSequenceperMixture[i][c] =
-          Array.from(
-            new Array(T),
-            () => new Array(this.params.states).fill(0),
-          );
+        this.gammaSequenceperMixture[i][c] = Array.from(
+          new Array(T),
+          () => new Array(this.params.states).fill(0),
+        );
       }
       if (T > maxT) {
         maxT = T;
@@ -130,11 +128,13 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
       for (let c = 0; c < this.params.gaussians; c += 1) {
         this.params.xStates[i].params.mixtureCoeffs[c] = 0;
         if (this.params.covarianceMode === 'full') {
-          this.params.xStates[i].params.components[c].covariance =
-            new Array(this.params.dimension ** 2).fill(0);
+          this.params.xStates[i].params.components[c].covariance = new Array(
+            this.params.dimension ** 2,
+          ).fill(0);
         } else {
-          this.params.xStates[i].params.components[c].covariance =
-            new Array(this.params.dimension).fill(0);
+          this.params.xStates[i].params.components[c].covariance = new Array(
+            this.params.dimension,
+          ).fill(0);
         }
       }
     }
@@ -162,7 +162,7 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     this.betaSeq = null;
     this.gammaSum = null;
     this.gammaSumPerMixture = null;
-    this.params.xStates = this.params.xStates.map(s => s.params);
+    this.params.xStates = this.params.xStates.map((s) => s.params);
   },
 
   /**
@@ -176,15 +176,14 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     } else {
       this.setLeftRight();
     }
-    const currentRegularization = dataStddev.map(std => Math.max(
+    const currentRegularization = dataStddev.map((std) => Math.max(
       this.params.regularization.absolute,
       this.params.regularization.relative * std,
     ));
-    const initCovariance = (this.params.covarianceMode === 'full') ?
-      () => new Array(this.params.dimension ** 2)
-        .fill(this.params.regularization.absolute / 2) :
-      () => new Array(this.params.dimension)
-        .fill(0);
+    const initCovariance = (this.params.covarianceMode === 'full')
+      ? () => new Array(this.params.dimension ** 2)
+        .fill(this.params.regularization.absolute / 2)
+      : () => new Array(this.params.dimension).fill(0);
     for (let i = 0; i < this.params.states; i += 1) {
       // this.params.xStates[i].initParametersToDefault(dataStddev);
       const s = this.params.xStates[i];
@@ -219,8 +218,7 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
       for (let n = 0; n < this.params.states; n += 1) {
         for (let t = 0; t < step; t += 1) {
           for (let d = 0; d < this.params.dimension; d += 1) {
-            this.params.xStates[n].params.components[0].mean[d] +=
-              phrase.get(offset + t, d);
+            this.params.xStates[n].params.components[0].mean[d] += phrase.get(offset + t, d);
           }
         }
         offset += step;
@@ -244,8 +242,9 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     if (!trainingSet || trainingSet.empty()) return;
 
     for (let n = 0; n < this.params.states; n += 1) {
-      this.params.xStates[n].params.components[0].covariance =
-        new Array(this.params.dimension ** (this.params.covarianceMode === 'full' ? 2 : 1)).fill(0);
+      this.params.xStates[n].params.components[0].covariance = new Array(
+        this.params.dimension ** (this.params.covarianceMode === 'full' ? 2 : 1),
+      ).fill(0);
     }
 
     const factor = new Array(this.params.states).fill(0);
@@ -257,18 +256,16 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
       for (let n = 0; n < this.params.states; n += 1) {
         for (let t = 0; t < step; t += 1) {
           for (let d1 = 0; d1 < this.params.dimension; d1 += 1) {
-            othermeans[((n * this.params.dimension)) + d1] +=
-                phrase.get(offset + t, d1);
+            othermeans[((n * this.params.dimension)) + d1] += phrase.get(offset + t, d1);
             if (this.params.covarianceMode === 'full') {
               for (let d2 = 0; d2 < this.params.dimension; d2 += 1) {
                 this.params.xStates[n].params.components[0]
-                  .covariance[(d1 * this.params.dimension) + d2] +=
-                    phrase.get(offset + t, d1) *
-                    phrase.get(offset + t, d2);
+                  .covariance[(d1 * this.params.dimension) + d2]
+                    += phrase.get(offset + t, d1) * phrase.get(offset + t, d2);
               }
             } else {
-              this.params.xStates[n].params.components[0].covariance[d1] +=
-                phrase.get(offset + t, d1) ** 2;
+              this.params.xStates[n].params.components[0].covariance[d1]
+                += phrase.get(offset + t, d1) ** 2;
             }
           }
         }
@@ -283,8 +280,7 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
         if (this.params.covarianceMode === 'full') {
           for (let d2 = 0; d2 < this.params.dimension; d2 += 1) {
             this.params.xStates[n].params.components[0]
-              .covariance[(d1 * this.params.dimension) + d2] /=
-                factor[n];
+              .covariance[(d1 * this.params.dimension) + d2] /= factor[n];
           }
         } else {
           this.params.xStates[n].params.components[0].covariance[d1] /= factor[n];
@@ -297,14 +293,14 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
         if (this.params.covarianceMode === 'full') {
           for (let d2 = 0; d2 < this.params.dimension; d2 += 1) {
             this.params.xStates[n].params.components[0]
-              .covariance[(d1 * this.params.dimension) + d2] -=
-                othermeans[(n * this.params.dimension) + d1] *
-                othermeans[(n * this.params.dimension) + d2];
+              .covariance[(d1 * this.params.dimension) + d2]
+                -= othermeans[(n * this.params.dimension) + d1]
+                * othermeans[(n * this.params.dimension) + d2];
           }
         } else {
-          this.params.xStates[n].params.components[0].covariance[d1] -=
-            othermeans[(n * this.params.dimension) + d1] *
-            othermeans[(n * this.params.dimension) + d1];
+          this.params.xStates[n].params.components[0].covariance[d1]
+            -= othermeans[(n * this.params.dimension) + d1]
+            * othermeans[(n * this.params.dimension) + d1];
         }
       }
       this.params.xStates[n].regularize();
@@ -334,10 +330,9 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
       if (!ts.empty()) {
         const gmmParams = trainGMM(ts, this.params);
         for (let c = 0; c < this.params.gaussians; c += 1) {
-          this.params.xStates[n].params.components[c].mean =
-            gmmParams.components[c].mean;
-          this.params.xStates[n].params.components[c].covariance =
-            gmmParams.components[c].covariance;
+          this.params.xStates[n].params.components[c].mean = gmmParams.components[c].mean;
+          this.params.xStates[n].params.components[c].covariance = gmmParams
+            .components[c].covariance;
           this.params.xStates[n].updateInverseCovariances();
         }
       }
@@ -420,18 +415,15 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
       this.beta[i] = 0;
       if (this.params.transitionMode === 'ergodic') {
         for (let j = 0; j < this.params.states; j += 1) {
-          this.beta[i] += this.params.transition[i][j] *
-            this.previousBeta[j] *
-            this.params.xStates[j].likelihood(observation);
+          this.beta[i] += this.params.transition[i][j] * this.previousBeta[j]
+            * this.params.xStates[j].likelihood(observation);
         }
       } else {
-        this.beta[i] += this.params.transition[i * 2] *
-          this.previousBeta[i] *
-          this.params.xStates[i].likelihood(observation);
+        this.beta[i] += this.params.transition[i * 2] * this.previousBeta[i]
+          * this.params.xStates[i].likelihood(observation);
         if (i < this.params.states - 1) {
-          this.beta[i] += this.params.transition[(i * 2) + 1] *
-            this.previousBeta[i + 1] *
-            this.params.xStates[i + 1].likelihood(observation);
+          this.beta[i] += this.params.transition[(i * 2) + 1] * this.previousBeta[i + 1]
+            * this.params.xStates[i + 1].likelihood(observation);
         }
       }
       this.beta[i] *= ct;
@@ -455,17 +447,16 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
       this.alpha[j] = 0;
       if (this.params.transitionMode === 'ergodic') {
         for (let i = 0; i < this.params.states; i += 1) {
-          this.alpha[j] += this.previousAlpha[i] *
-            this.params.transition[i][j];
+          this.alpha[j] += this.previousAlpha[i]
+            * this.params.transition[i][j];
         }
       } else {
         this.alpha[j] += this.previousAlpha[j] * this.params.transition[j * 2];
         if (j > 0) {
-          this.alpha[j] += this.previousAlpha[j - 1] *
-            this.params.transition[((j - 1) * 2) + 1];
+          this.alpha[j] += this.previousAlpha[j - 1] * this.params.transition[((j - 1) * 2) + 1];
         } else {
-          this.alpha[0] += this.previousAlpha[this.params.states - 1] *
-            this.params.transition[(this.params.states * 2) - 1];
+          this.alpha[0] += this.previousAlpha[this.params.states - 1]
+            * this.params.transition[(this.params.states * 2) - 1];
         }
       }
       this.alpha[j] *= observationLikelihoods[j];
@@ -497,19 +488,15 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
       this.beta[i] = 0;
       if (this.params.transitionMode === 'ergodic') {
         for (let j = 0; j < this.params.states; j += 1) {
-          this.beta[i] +=
-            this.params.transition[i][j] *
-            this.previousBeta[j] *
-            observationLikelihoods[j];
+          this.beta[i] += this.params.transition[i][j] * this.previousBeta[j]
+            * observationLikelihoods[j];
         }
       } else {
-        this.beta[i] += this.params.transition[i * 2] *
-          this.previousBeta[i] *
-          observationLikelihoods[i];
+        this.beta[i] += this.params.transition[i * 2] * this.previousBeta[i]
+          * observationLikelihoods[i];
         if (i < this.params.states - 1) {
-          this.beta[i] += this.params.transition[(i * 2) + 1] *
-            this.previousBeta[i + 1] *
-            observationLikelihoods[i + 1];
+          this.beta[i] += this.params.transition[(i * 2) + 1]
+            * this.previousBeta[i + 1] * observationLikelihoods[i + 1];
         }
       }
       this.beta[i] *= ct;
@@ -540,8 +527,8 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     );
     for (let t = 0; t < T; t += 1) {
       for (let i = 0; i < this.params.states; i += 1) {
-        observationProbabilities[t][i] =
-          this.params.xStates[i].likelihood(currentPhrase.getFrame(t));
+        observationProbabilities[t][i] = this.params.xStates[i]
+          .likelihood(currentPhrase.getFrame(t));
       }
     }
 
@@ -569,8 +556,7 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     // Compute Gamma Variable
     for (let t = 0; t < T; t += 1) {
       for (let i = 0; i < this.params.states; i += 1) {
-        this.gammaSequence[phraseIndex][t][i] =
-          (this.alphaSeq[t][i] * this.betaSeq[t][i]) / ct[t];
+        this.gammaSequence[phraseIndex][t][i] = (this.alphaSeq[t][i] * this.betaSeq[t][i]) / ct[t];
       }
     }
 
@@ -582,16 +568,15 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
         normConst = 0;
         if (this.params.gaussians === 1) {
           const oo = observationProbabilities[t][i];
-          this.gammaSequenceperMixture[phraseIndex][0][t][i] =
-            this.gammaSequence[phraseIndex][t][i] * oo;
+          this.gammaSequenceperMixture[phraseIndex][0][t][i] = this
+            .gammaSequence[phraseIndex][t][i] * oo;
           normConst += oo;
         } else {
           for (let c = 0; c < this.params.gaussians; c += 1) {
             const oo = this.params.xStates[i]
               .componentLikelihood(currentPhrase.getFrame(t), c);
-            this.gammaSequenceperMixture[phraseIndex][c][t][i] =
-              this.gammaSequence[phraseIndex][t][i] *
-              oo;
+            this.gammaSequenceperMixture[phraseIndex][c][t][i] = this
+              .gammaSequence[phraseIndex][t][i] * oo;
             normConst += oo;
           }
         }
@@ -608,31 +593,23 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
       for (let t = 0; t < T - 1; t += 1) {
         for (let i = 0; i < this.params.states; i += 1) {
           for (let j = 0; j < this.params.states; j += 1) {
-            this.epsilonSequence[phraseIndex][t][i][j] =
-              this.alphaSeq[t][i] *
-              this.params.transition[i][j] *
-              this.betaSeq[t + 1][j];
-            this.epsilonSequence[phraseIndex][t][i][j] *=
-              observationProbabilities[t + 1][j];
+            this.epsilonSequence[phraseIndex][t][i][j] = this.alphaSeq[t][i]
+              * this.params.transition[i][j] * this.betaSeq[t + 1][j];
+            this.epsilonSequence[phraseIndex][t][i][j] *= observationProbabilities[t + 1][j];
           }
         }
       }
     } else {
       for (let t = 0; t < T - 1; t += 1) {
         for (let i = 0; i < this.params.states; i += 1) {
-          this.epsilonSequence[phraseIndex][t][i * 2] =
-            this.alphaSeq[t][i] *
-            this.params.transition[i * 2] *
-            this.betaSeq[t + 1][i];
-          this.epsilonSequence[phraseIndex][t][i * 2] *=
-            observationProbabilities[t + 1][i];
+          this.epsilonSequence[phraseIndex][t][i * 2] = this.alphaSeq[t][i]
+            * this.params.transition[i * 2] * this.betaSeq[t + 1][i];
+          this.epsilonSequence[phraseIndex][t][i * 2] *= observationProbabilities[t + 1][i];
           if (i < this.params.states - 1) {
-            this.epsilonSequence[phraseIndex][t][(i * 2) + 1] =
-              this.alphaSeq[t][i] *
-              this.params.transition[(i * 2) + 1] *
-              this.betaSeq[t + 1][i + 1];
-            this.epsilonSequence[phraseIndex][t][(i * 2) + 1] *=
-              observationProbabilities[t + 1][i + 1];
+            this.epsilonSequence[phraseIndex][t][(i * 2) + 1] = this.alphaSeq[t][i]
+              * this.params.transition[(i * 2) + 1] * this.betaSeq[t + 1][i + 1];
+            this.epsilonSequence[phraseIndex][t][(i * 2) + 1]
+              *= observationProbabilities[t + 1][i + 1];
           }
         }
       }
@@ -658,11 +635,10 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     trainingSet.forEach((phrase) => {
       for (let i = 0; i < this.params.states; i += 1) {
         for (let t = 0; t < phrase.length; t += 1) {
-          this.gammaSum[i] +=
-            this.gammaSequence[phraseIndex][t][i];
+          this.gammaSum[i] += this.gammaSequence[phraseIndex][t][i];
           for (let c = 0; c < this.params.gaussians; c += 1) {
-            this.gammaSumPerMixture[(i * this.params.gaussians) + c] +=
-              this.gammaSequenceperMixture[phraseIndex][c][t][i];
+            this.gammaSumPerMixture[(i * this.params.gaussians) + c]
+              += this.gammaSequenceperMixture[phraseIndex][c][t][i];
           }
         }
       }
@@ -682,8 +658,8 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
       for (let i = 0; i < this.params.states; i += 1) {
         for (let t = 0; t < phrase.length; t += 1) {
           for (let c = 0; c < this.params.gaussians; c += 1) {
-            this.params.xStates[i].params.mixtureCoeffs[c] +=
-              this.gammaSequenceperMixture[phraseIndex][c][t][i];
+            this.params.xStates[i].params.mixtureCoeffs[c] += this
+              .gammaSequenceperMixture[phraseIndex][c][t][i];
           }
         }
       }
@@ -716,9 +692,8 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
         for (let t = 0; t < phrase.length; t += 1) {
           for (let c = 0; c < this.params.gaussians; c += 1) {
             for (let d = 0; d < this.params.dimension; d += 1) {
-              this.params.xStates[i].params.components[c].mean[d] +=
-                this.gammaSequenceperMixture[phraseIndex][c][t][i] *
-                phrase.get(t, d);
+              this.params.xStates[i].params.components[c].mean[d]
+                += this.gammaSequenceperMixture[phraseIndex][c][t][i] * phrase.get(t, d);
             }
           }
         }
@@ -731,8 +706,8 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
       for (let c = 0; c < this.params.gaussians; c += 1) {
         for (let d = 0; d < this.params.dimension; d += 1) {
           if (this.gammaSumPerMixture[(i * this.params.gaussians) + c] > 0) {
-            this.params.xStates[i].params.components[c].mean[d] /=
-              this.gammaSumPerMixture[(i * this.params.gaussians) + c];
+            this.params.xStates[i].params.components[c].mean[d]
+              /= this.gammaSumPerMixture[(i * this.params.gaussians) + c];
           }
           if (Number.isNaN(this.params.xStates[i].params.components[c].mean[d])) {
             throw new Error('Convergence Error');
@@ -758,19 +733,16 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
               if (this.params.covarianceMode === 'full') {
                 for (let d2 = d1; d2 < this.params.dimension; d2 += 1) {
                   this.params.xStates[i].params.components[c]
-                    .covariance[(d1 * this.params.dimension) + d2] +=
-                    this.gammaSequenceperMixture[phraseIndex][c][t][i] *
-                    (phrase.get(t, d1) -
-                      this.params.xStates[i].params.components[c].mean[d1]) *
-                    (phrase.get(t, d2) -
-                      this.params.xStates[i].params.components[c].mean[d2]);
+                    .covariance[(d1 * this.params.dimension) + d2]
+                      += this.gammaSequenceperMixture[phraseIndex][c][t][i]
+                      * (phrase.get(t, d1) - this.params.xStates[i].params.components[c].mean[d1])
+                      * (phrase.get(t, d2) - this.params.xStates[i].params.components[c].mean[d2]);
                 }
               } else {
-                const value = phrase.get(t, d1) -
-                  this.params.xStates[i].params.components[c].mean[d1];
-                this.params.xStates[i].params.components[c].covariance[d1] +=
-                  this.gammaSequenceperMixture[phraseIndex][c][t][i] *
-                  (value ** 2);
+                const value = phrase.get(t, d1) - this.params
+                  .xStates[i].params.components[c].mean[d1];
+                this.params.xStates[i].params.components[c].covariance[d1]
+                  += this.gammaSequenceperMixture[phraseIndex][c][t][i] * (value ** 2);
               }
             }
           }
@@ -787,18 +759,18 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
             if (this.params.covarianceMode === 'full') {
               for (let d2 = d1; d2 < this.params.dimension; d2 += 1) {
                 this.params.xStates[i].params.components[c]
-                  .covariance[(d1 * this.params.dimension) + d2] /=
-                  this.gammaSumPerMixture[(i * this.params.gaussians) + c];
+                  .covariance[(d1 * this.params.dimension) + d2]
+                    /= this.gammaSumPerMixture[(i * this.params.gaussians) + c];
                 if (d1 !== d2) {
                   this.params.xStates[i].params.components[c]
-                    .covariance[(d2 * this.params.dimension) + d1] =
-                    this.params.xStates[i].params.components[c]
+                    .covariance[(d2 * this.params.dimension) + d1] = this.params
+                      .xStates[i].params.components[c]
                       .covariance[(d1 * this.params.dimension) + d2];
                 }
               }
             } else {
-              this.params.xStates[i].params.components[c].covariance[d1] /=
-                this.gammaSumPerMixture[(i * this.params.gaussians) + c];
+              this.params.xStates[i].params.components[c].covariance[d1]
+                /= this.gammaSumPerMixture[(i * this.params.gaussians) + c];
             }
           }
         }
@@ -844,12 +816,9 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
    */
   baumWelchEstimateTransitions(trainingSet) {
     // Set transition matrix to 0
-    this.params.transition = this.params.transitionMode === 'ergodic' ?
-      Array.from(
-        new Array(this.params.states),
-        () => new Array(this.params.states).fill(0),
-      ) :
-      new Array(this.params.states * 2).fill(0);
+    this.params.transition = this.params.transitionMode === 'ergodic'
+      ? Array.from(new Array(this.params.states), () => new Array(this.params.states).fill(0))
+      : new Array(this.params.states * 2).fill(0);
 
     // Re-estimate Transition probabilities
     let phraseIndex = 0;
@@ -870,19 +839,17 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
           if (this.params.transitionMode === 'ergodic') {
             for (let j = 0; j < this.params.states; j += 1) {
               for (let t = 0; t < phrase.length - 1; t += 1) {
-                this.params.transition[i][j] +=
-                  this.epsilonSequence[phraseIndex][t][i][j];
+                this.params.transition[i][j] += this.epsilonSequence[phraseIndex][t][i][j];
               }
             }
           } else {
             for (let t = 0; t < phrase.length - 1; t += 1) {
-              this.params.transition[i * 2] +=
-                this.epsilonSequence[phraseIndex][t][i * 2];
+              this.params.transition[i * 2] += this.epsilonSequence[phraseIndex][t][i * 2];
             }
             if (i < this.params.states - 1) {
               for (let t = 0; t < phrase.length - 1; t += 1) {
-                this.params.transition[(i * 2) + 1] +=
-                  this.epsilonSequence[phraseIndex][t][(i * 2) + 1];
+                this.params.transition[(i * 2) + 1] += this
+                  .epsilonSequence[phraseIndex][t][(i * 2) + 1];
               }
             }
           }
@@ -895,8 +862,8 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
     if (this.params.transitionMode === 'ergodic') {
       for (let i = 0; i < this.params.states; i += 1) {
         for (let j = 0; j < this.params.states; j += 1) {
-          this.params.transition[i][j] /=
-            (this.gammaSum[i] + (2 * TRANSITION_REGULARIZATION));
+          this.params.transition[i][j] /= (this.gammaSum[i]
+            + (2 * TRANSITION_REGULARIZATION));
           if (Number.isNaN(this.params.transition[i][j])) {
             throw new Error('Convergence Error. Check your training data or increase the variance offset');
           }
@@ -904,14 +871,14 @@ const hmmTrainerPrototype = /** @lends withHMMTraining */ {
       }
     } else {
       for (let i = 0; i < this.params.states; i += 1) {
-        this.params.transition[i * 2] /=
-          (this.gammaSum[i] + (2 * TRANSITION_REGULARIZATION));
+        this.params.transition[i * 2] /= (this.gammaSum[i]
+          + (2 * TRANSITION_REGULARIZATION));
         if (Number.isNaN(this.params.transition[i * 2])) {
           throw new Error('Convergence Error. Check your training data or increase the variance offset');
         }
         if (i < this.params.states - 1) {
-          this.params.transition[(i * 2) + 1] /=
-            (this.gammaSum[i] + (2 * TRANSITION_REGULARIZATION));
+          this.params.transition[(i * 2) + 1] /= (this.gammaSum[i]
+            + (2 * TRANSITION_REGULARIZATION));
           if (Number.isNaN(this.params.transition[(i * 2) + 1])) {
             throw new Error('Convergence Error. Check your training data or increase the variance offset');
           }

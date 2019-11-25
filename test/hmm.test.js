@@ -154,8 +154,8 @@ test('Multiclass Ergodic HMM with actual data', (t) => {
     ts.push(i, label);
     const input = readFileSync(`./test/data/hmm_gesture_${i + 1}.txt`, 'utf8')
       .split('\n')
-      .filter(l => l !== '')
-      .map(line => line.split(' ').map(x => parseFloat(x)));
+      .filter((l) => l !== '')
+      .map((line) => line.split(' ').map((x) => parseFloat(x)));
     input.forEach((frame) => {
       ts.getPhrase(i).push(frame);
     });
@@ -207,8 +207,8 @@ test('Multiclass Left-right HMM with actual data', (t) => {
     ts.push(i, label);
     const input = readFileSync(`./test/data/hmm_gesture_${i + 1}.txt`, 'utf8')
       .split('\n')
-      .filter(l => l !== '')
-      .map(line => line.split(' ').map(x => parseFloat(x)));
+      .filter((l) => l !== '')
+      .map((line) => line.split(' ').map((x) => parseFloat(x)));
     input.forEach((frame) => {
       ts.getPhrase(i).push(frame);
     });

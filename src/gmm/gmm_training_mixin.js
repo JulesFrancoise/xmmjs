@@ -27,7 +27,7 @@ const gmmTrainerPrototype = /** @lends withGMMTraining */ {
    */
   initParametersToDefault(dataStddev) {
     let normCoeffs = 0;
-    this.currentRegularization = dataStddev.map(std => Math.max(
+    this.currentRegularization = dataStddev.map((std) => Math.max(
       this.params.regularization.absolute,
       this.params.regularization.relative * std,
     ));
@@ -98,12 +98,11 @@ const gmmTrainerPrototype = /** @lends withGMMTraining */ {
             if (this.params.covarianceMode === 'full') {
               for (let d2 = 0; d2 < this.params.dimension; d2 += 1) {
                 this.params.components[n]
-                  .covariance[(d1 * this.params.dimension) + d2] +=
-                  phrase.get(offset + t, d1) * phrase.get(offset + t, d2);
+                  .covariance[(d1 * this.params.dimension) + d2]
+                    += phrase.get(offset + t, d1) * phrase.get(offset + t, d2);
               }
             } else {
-              this.params.components[n].covariance[d1] +=
-                phrase.get(offset + t, d1) ** 2;
+              this.params.components[n].covariance[d1] += phrase.get(offset + t, d1) ** 2;
             }
           }
         }
@@ -129,13 +128,13 @@ const gmmTrainerPrototype = /** @lends withGMMTraining */ {
       for (let d1 = 0; d1 < this.params.dimension; d1 += 1) {
         if (this.params.covarianceMode === 'full') {
           for (let d2 = 0; d2 < this.params.dimension; d2 += 1) {
-            this.params.components[n].covariance[(d1 * this.params.dimension) + d2] -=
-              gmeans[(n * this.params.dimension) + d1] *
-              gmeans[(n * this.params.dimension) + d2];
+            this.params.components[n].covariance[(d1 * this.params.dimension) + d2]
+              -= gmeans[(n * this.params.dimension) + d1]
+              * gmeans[(n * this.params.dimension) + d2];
           }
         } else {
-          this.params.components[n].covariance[d1] -=
-            gmeans[(n * this.params.dimension) + d1] ** 2;
+          this.params.components[n].covariance[d1]
+            -= gmeans[(n * this.params.dimension) + d1] ** 2;
         }
       }
     }
@@ -166,9 +165,9 @@ const gmmTrainerPrototype = /** @lends withGMMTraining */ {
         for (let c = 0; c < this.params.gaussians; c += 1) {
           p[c][tbase + t] = this.componentLikelihood(phrase.getFrame(t), c);
 
-          if (p[c][tbase + t] === 0 ||
-            Number.isNaN(p[c][tbase + t]) ||
-            p[c][tbase + t] === +Infinity) {
+          if (p[c][tbase + t] === 0
+            || Number.isNaN(p[c][tbase + t])
+            || p[c][tbase + t] === +Infinity) {
             p[c][tbase + t] = 1e-100;
           }
           normConst += p[c][tbase + t];
@@ -195,8 +194,7 @@ const gmmTrainerPrototype = /** @lends withGMMTraining */ {
         for (let pix = 0; pix < phraseIndices.length; pix += 1) {
           const phrase = trainingSet.phrases[phraseIndices[pix]];
           for (let t = 0; t < phrase.length; t += 1) {
-            this.params.components[c].mean[d] +=
-              p[c][tbase + t] * phrase.get(t, d);
+            this.params.components[c].mean[d] += p[c][tbase + t] * phrase.get(t, d);
           }
           tbase += phrase.length;
         }
@@ -214,17 +212,16 @@ const gmmTrainerPrototype = /** @lends withGMMTraining */ {
             for (let pix = 0; pix < phraseIndices.length; pix += 1) {
               const phrase = trainingSet.phrases[phraseIndices[pix]];
               for (let t = 0; t < phrase.length; t += 1) {
-                this.params.components[c].covariance[(d1 * this.params.dimension) + d2] +=
-                  p[c][tbase + t] *
-                  (phrase.get(t, d1) - this.params.components[c].mean[d1]) *
-                  (phrase.get(t, d2) - this.params.components[c].mean[d2]);
+                this.params.components[c].covariance[(d1 * this.params.dimension) + d2]
+                  += p[c][tbase + t] * (phrase.get(t, d1) - this.params.components[c].mean[d1])
+                  * (phrase.get(t, d2) - this.params.components[c].mean[d2]);
               }
               tbase += phrase.length;
             }
             this.params.components[c].covariance[(d1 * this.params.dimension) + d2] /= E[c];
             if (d1 !== d2) {
-              this.params.components[c].covariance[(d2 * this.params.dimension) + d1] =
-                this.params.components[c].covariance[(d1 * this.params.dimension) + d2];
+              this.params.components[c].covariance[(d2 * this.params.dimension) + d1] = this.params
+                .components[c].covariance[(d1 * this.params.dimension) + d2];
             }
           }
         }
@@ -238,8 +235,7 @@ const gmmTrainerPrototype = /** @lends withGMMTraining */ {
             const phrase = trainingSet.phrases[phraseIndices[pix]];
             for (let t = 0; t < phrase.length; t += 1) {
               const value = (phrase.get(t, d1) - this.params.components[c].mean[d1]);
-              this.params.components[c].covariance[d1] +=
-                    p[c][tbase + t] * value * value;
+              this.params.components[c].covariance[d1] += p[c][tbase + t] * value * value;
             }
             tbase += phrase.length;
           }

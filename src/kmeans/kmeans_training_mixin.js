@@ -99,7 +99,7 @@ const kMeansTrainingPrototype = {
     }
     this.params.centers.forEach((_, c) => {
       this.params.centers[c] = this.params.centers[c]
-        .map(x => x / pointsPerCluster[c]);
+        .map((x) => x / pointsPerCluster[c]);
     });
   },
 
@@ -109,12 +109,14 @@ const kMeansTrainingPrototype = {
       Array(this.params.clusters),
       () => Math.floor(Math.random() * phrase.length),
     );
-    this.params.centers = indices.map(i => phrase.getFrame(i));
+    this.params.centers = indices.map((i) => phrase.getFrame(i));
   },
 
   updateCenters(previousCenters, trainingSet) {
-    this.params.centers = Array.from(Array(this.params.clusters), () =>
-      new Array(this.params.dimension).fill(0));
+    this.params.centers = Array.from(
+      Array(this.params.clusters),
+      () => new Array(this.params.dimension).fill(0),
+    );
     const numFramesPerCluster = Array(this.params.clusters).fill(0);
     trainingSet.forEach((phrase) => {
       for (let t = 0; t < phrase.length; t += 1) {
@@ -156,12 +158,13 @@ export default function withKMeansTraining(
   if (!isBaseModel(o)) {
     throw new Error('The base object must include a standard set of parameters (`params` key), @see `ModelBase`.');
   }
-  const trainingConfig = Object.assign({
+  const trainingConfig = {
     initialization: 'random',
     relativeDistanceThreshold: 1e-3,
     minIterations: 5,
     maxIterations: 100,
-  }, trainingConfiguration);
+    ...trainingConfiguration,
+  };
   const model = Object.assign(o, kMeansTrainingPrototype, {
     trainingConfig,
   });

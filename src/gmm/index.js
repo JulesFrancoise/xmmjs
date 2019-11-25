@@ -104,7 +104,7 @@ export function trainMulticlassGMM(
   const { inputDimension, outputDimension } = trainingSet;
   const model = withMulticlassTraining(
     MulticlassModelBase({ inputDimension, outputDimension, ...configuration }),
-    ts => trainGMM(ts, configuration, convergenceCriteria),
+    (ts) => trainGMM(ts, configuration, convergenceCriteria),
   );
   return model.train(trainingSet);
 }

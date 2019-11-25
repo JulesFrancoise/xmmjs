@@ -76,12 +76,12 @@ test('Multiclass ergodic HMR with actual data', (t) => {
   ts.push(0);
   let input = readFileSync('./test/data/hmr_input_1.txt', 'utf8')
     .split('\n')
-    .filter(l => l !== '')
-    .map(line => line.split(' ').map(x => parseFloat(x)));
+    .filter((l) => l !== '')
+    .map((line) => line.split(' ').map((x) => parseFloat(x)));
   let output = readFileSync('./test/data/hmr_output_1.txt', 'utf8')
     .split('\n')
-    .filter(l => l !== '')
-    .map(line => line.split(' ').map(x => parseFloat(x)));
+    .filter((l) => l !== '')
+    .map((line) => line.split(' ').map((x) => parseFloat(x)));
   const len = Math.min(input.length, output.length);
   input = input.slice(0, len);
   output = output.slice(0, len);
@@ -118,12 +118,12 @@ test('Multiclass Left-Right HMR with actual data', (t) => {
   ts.push(0);
   let input = readFileSync('./test/data/hmr_input_1.txt', 'utf8')
     .split('\n')
-    .filter(l => l !== '')
-    .map(line => line.split(' ').map(x => parseFloat(x)));
+    .filter((l) => l !== '')
+    .map((line) => line.split(' ').map((x) => parseFloat(x)));
   let output = readFileSync('./test/data/hmr_output_1.txt', 'utf8')
     .split('\n')
-    .filter(l => l !== '')
-    .map(line => line.split(' ').map(x => parseFloat(x)));
+    .filter((l) => l !== '')
+    .map((line) => line.split(' ').map((x) => parseFloat(x)));
   const len = Math.min(input.length, output.length);
   input = input.slice(0, len);
   output = output.slice(0, len);

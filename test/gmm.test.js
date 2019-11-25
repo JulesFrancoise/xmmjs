@@ -80,8 +80,8 @@ test('Multiclass GMM with actual data', (t) => {
     ts.push(i, label);
     const input = readFileSync(`./test/data/gmm_phrase_${i + 1}.txt`, 'utf8')
       .split('\n')
-      .filter(l => l !== '')
-      .map(line => line.split(' ').map(x => parseFloat(x)));
+      .filter((l) => l !== '')
+      .map((line) => line.split(' ').map((x) => parseFloat(x)));
     input.forEach((frame) => {
       ts.getPhrase(i).push(frame);
     });

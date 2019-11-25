@@ -1,22 +1,3 @@
 {
-  "env": {
-    "build": {
-      "presets": [["env", {
-        "targets": {
-          "browsers": ["last 2 Chrome versions", "Firefox >= 57"]
-        },
-        "modules": false
-      }]],
-      "plugins": ["transform-object-rest-spread"]
-    },
-    "test": {
-      "presets": ["env"],
-      "env": {
-  			"development": {
-  				"sourceMaps": "inline"
-  			}
-  		},
-      "plugins": ["transform-object-rest-spread"]
-    }
-  }
+  "presets": ["@babel/preset-env"]
 }

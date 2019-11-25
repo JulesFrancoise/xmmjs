@@ -34,8 +34,7 @@ const hmmBasePrototype = /** @lends withHMMBase */ {
     let normConst = 0;
     if (this.params.transitionMode === 'ergodic') {
       for (let i = 0; i < this.params.states; i += 1) {
-        this.alpha[i] = this.params.prior[i] *
-          this.params.xStates[i].likelihood(observation);
+        this.alpha[i] = this.params.prior[i] * this.params.xStates[i].likelihood(observation);
         normConst += this.alpha[i];
       }
     } else {
@@ -68,17 +67,16 @@ const hmmBasePrototype = /** @lends withHMMBase */ {
       this.alpha[j] = 0;
       if (this.params.transitionMode === 'ergodic') {
         for (let i = 0; i < this.params.states; i += 1) {
-          this.alpha[j] += this.previousAlpha[i] *
-            this.params.transition[i][j];
+          this.alpha[j] += this.previousAlpha[i] * this.params.transition[i][j];
         }
       } else {
         this.alpha[j] += this.previousAlpha[j] * this.params.transition[j * 2];
         if (j > 0) {
-          this.alpha[j] += this.previousAlpha[j - 1] *
-            this.params.transition[((j - 1) * 2) + 1];
+          this.alpha[j] += this.previousAlpha[j - 1]
+            * this.params.transition[((j - 1) * 2) + 1];
         } else {
-          this.alpha[0] += this.previousAlpha[this.params.states - 1] *
-            this.params.transition[(this.params.states * 2) - 1];
+          this.alpha[0] += this.previousAlpha[this.params.states - 1]
+            * this.params.transition[(this.params.states * 2) - 1];
         }
       }
       this.alpha[j] *= this.params.xStates[j].likelihood(observation);

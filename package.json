@@ -1,7 +1,7 @@
 {
   "name": "xmmjs",
   "description": "A Javascript port of the XMM Library",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Jules Françoise <me@julesfrancoise.com>",
   "license": "MIT",
   "main": "dist/index.js",
@@ -17,28 +17,23 @@
     "doc:dev": "documentation build src/** -f html -o docs --sort-order alpha --config documentation-dev.yml"
   },
   "devDependencies": {
-    "ava": "^0.25.0",
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.2.1",
-    "babel-loader": "^7.1.2",
-    "babel-plugin-external-helpers": "^6.22.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-register": "^6.26.0",
+    "@babel/preset-env": "^7.7.4",
+    "ava": "^2.4.0",
+    "babel-eslint": "^10.0.3",
     "cross-env": "^5.1.3",
-    "documentation": "^5.3.5",
-    "eslint": "^4.17.0",
-    "eslint-config-airbnb-base": "^12.1.0",
+    "documentation": "^12.1.4",
+    "eslint": "^6.7.1",
+    "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.13.0",
+    "esm": "^3.2.25",
     "nyc": "^11.4.1",
     "rimraf": "^2.6.2",
-    "rollup": "^0.63.5",
-    "rollup-plugin-analyzer": "^2.1.0",
-    "rollup-plugin-babel": "^3.0.7",
-    "rollup-plugin-filesize": "^4.0.1",
-    "rollup-plugin-minify-es": "^1.1.1",
-    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup": "^1.27.5",
+    "rollup-plugin-analyzer": "^3.2.2",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-filesize": "^6.2.1",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-terser": "^5.1.2",
     "rollup-watch": "^4.3.1"
   },
   "ava": {
@@ -55,10 +50,8 @@
     "powerAssert": false,
     "modules": true,
     "require": [
-      "babel-register",
-      "babel-polyfill"
-    ],
-    "babel": "inherit"
+      "esm"
+    ]
   },
   "nyc": {
     "include": [

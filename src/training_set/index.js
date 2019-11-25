@@ -79,8 +79,8 @@ const trainingSetPrototype = /** @lends TrainingSet */ {
    */
   removeClass(label) {
     this.phrases = Object.keys(this.phrases)
-      .filter(i => this.phrases[i].label !== label)
-      .map(i => ({ i: this.phrases[i] }))
+      .filter((i) => this.phrases[i].label !== label)
+      .map((i) => ({ i: this.phrases[i] }))
       .reduce((x, p) => ({ ...x, ...p }), {});
   },
 
@@ -99,8 +99,8 @@ const trainingSetPrototype = /** @lends TrainingSet */ {
   getPhrasesOfClass(label) {
     const ts = TrainingSet(this); // eslint-disable-line no-use-before-define
     ts.phrases = Object.keys(this.phrases)
-      .filter(i => this.phrases[i].label === label)
-      .map(i => ({ [i]: this.phrases[i] }))
+      .filter((i) => this.phrases[i].label === label)
+      .map((i) => ({ [i]: this.phrases[i] }))
       .reduce((x, p) => ({ ...x, ...p }), {});
     return ts;
   },
@@ -111,7 +111,7 @@ const trainingSetPrototype = /** @lends TrainingSet */ {
    */
   labels() {
     return Object.keys(this.phrases)
-      .map(i => this.phrases[i].label)
+      .map((i) => this.phrases[i].label)
       .reduce((ll, x) => (ll.includes(x) ? ll : ll.concat([x])), []);
   },
 
@@ -139,7 +139,7 @@ const trainingSetPrototype = /** @lends TrainingSet */ {
       totalLength += this.phrases[i].length;
     });
 
-    return sum.map(x => x / totalLength);
+    return sum.map((x) => x / totalLength);
   },
 
   /**
@@ -159,7 +159,7 @@ const trainingSetPrototype = /** @lends TrainingSet */ {
       totalLength += this.phrases[i].length;
     });
 
-    return stddev.map(x => Math.sqrt(x / totalLength));
+    return stddev.map((x) => Math.sqrt(x / totalLength));
   },
 
   /**

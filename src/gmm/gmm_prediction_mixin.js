@@ -1,15 +1,14 @@
 import validateParameters from '../common/validation';
 import { isBaseModel } from '../core/model_base_mixin';
 
-const gmmParameterSpec = gaussians => ({
+const gmmParameterSpec = (gaussians) => ({
   gaussians: {
     required: true,
     check: { min: 1 },
   },
   regularization: {
     required: true,
-    check: ({ absolute, relative }) =>
-      (absolute && relative && absolute > 0 && relative > 0),
+    check: ({ absolute, relative }) => (absolute && relative && absolute > 0 && relative > 0),
   },
   covarianceMode: {
     required: true,
@@ -17,11 +16,11 @@ const gmmParameterSpec = gaussians => ({
   },
   mixtureCoeffs: {
     required: true,
-    check: m => m.length === gaussians,
+    check: (m) => m.length === gaussians,
   },
   components: {
     required: true,
-    check: c => c.length === gaussians,
+    check: (c) => c.length === gaussians,
   },
 });
 

@@ -42,12 +42,12 @@ test('GMR with actual data', (t) => {
   ts.push(0);
   const input = readFileSync('./test/data/gmr_input.txt', 'utf8')
     .split('\n')
-    .filter(l => l !== '')
-    .map(line => line.split(' ').map(x => parseFloat(x)));
+    .filter((l) => l !== '')
+    .map((line) => line.split(' ').map((x) => parseFloat(x)));
   const output = readFileSync('./test/data/gmr_output.txt', 'utf8')
     .split('\n')
-    .filter(l => l !== '')
-    .map(line => line.split(' ').map(x => parseFloat(x)));
+    .filter((l) => l !== '')
+    .map((line) => line.split(' ').map((x) => parseFloat(x)));
   input.forEach((frame, i) => {
     ts.getPhrase(0).push(frame.concat(output[i]));
   });
@@ -80,12 +80,12 @@ test('GMR with actual data 2x2', (t) => {
     ts.push(i, 'def');
     const input = readFileSync(`./test/data/gmr_input_${i + 1}.txt`, 'utf8')
       .split('\n')
-      .filter(l => l !== '')
-      .map(line => line.split(' ').map(x => parseFloat(x)));
+      .filter((l) => l !== '')
+      .map((line) => line.split(' ').map((x) => parseFloat(x)));
     const output = readFileSync(`./test/data/gmr_output_${i + 1}.txt`, 'utf8')
       .split('\n')
-      .filter(l => l !== '')
-      .map(line => line.split(' ').map(x => parseFloat(x)));
+      .filter((l) => l !== '')
+      .map((line) => line.split(' ').map((x) => parseFloat(x)));
     input.forEach((frame, j) => {
       ts.getPhrase(i).push(frame.concat(output[j]));
     });
@@ -105,17 +105,19 @@ test('GMR with actual data 2x2', (t) => {
   let predictionError = 0;
   const input = readFileSync('./test/data/gmr_input_X.txt', 'utf8')
     .split('\n')
-    .filter(l => l !== '')
-    .map(line => line.split(' ').map(x => parseFloat(x)));
+    .filter((l) => l !== '')
+    .map((line) => line.split(' ').map((x) => parseFloat(x)));
   const output = readFileSync('./test/data/gmr_output_X.txt', 'utf8')
     .split('\n')
-    .filter(l => l !== '')
-    .map(line => line.split(' ').map(x => parseFloat(x)));
+    .filter((l) => l !== '')
+    .map((line) => line.split(' ').map((x) => parseFloat(x)));
   input.forEach((frame, i) => {
     predictor.predict(frame);
     prediction.push(predictor.results.outputValues);
-    predictionError += predictor.results.outputValues.reduce((x, y, j) =>
-      Math.abs(output[i][j] - y), 0);
+    predictionError += predictor.results.outputValues.reduce(
+      (x, y, j) => Math.abs(output[i][j] - y),
+      0,
+    );
   });
   predictionError /= (input.length * 3);
   t.true(predictionError < 0.001);

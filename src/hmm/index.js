@@ -100,7 +100,7 @@ export function trainMulticlassHMM(
   const { inputDimension, outputDimension } = trainingSet;
   const model = withMulticlassTraining(
     MulticlassModelBase({ inputDimension, outputDimension, ...configuration }),
-    ts => trainHMM(ts, configuration, convergenceCriteria),
+    (ts) => trainHMM(ts, configuration, convergenceCriteria),
   );
   return model.train(trainingSet);
 }

@@ -93,7 +93,7 @@ function checkSpec(model, parameter, specification, value) {
  * // }
  */
 export default function validateParameters(model, specification, values) {
-  const parameters = Object.assign({}, values);
+  const parameters = { ...values };
   Object.keys(specification).forEach((attr) => {
     const spec = specification[attr];
 
@@ -105,9 +105,9 @@ export default function validateParameters(model, specification, values) {
     // Check the validity of the input parameters
     checkSpec(model, attr, spec.check, values[attr]);
 
-    parameters[attr] = spec.transform ?
-      spec.transform(values[attr]) :
-      values[attr];
+    parameters[attr] = spec.transform
+      ? spec.transform(values[attr])
+      : values[attr];
   });
   return parameters;
 }

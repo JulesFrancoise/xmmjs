@@ -7,7 +7,7 @@ import CircularBuffer from '../common/circular_buffer';
  * @return {Object}
  * @ignore
  */
-const predictionBasePrototype = bimodal => (/** @lends withAbtractPrediction */{
+const predictionBasePrototype = (bimodal) => (/** @lends withAbtractPrediction */{
   /**
    * Likelihood Buffer
    * @type {CircularBuffer}
@@ -76,10 +76,14 @@ export default function withAbtractPrediction(o, likelihoodWindow = 1) {
   if (!isBaseModel(o)) {
     throw new Error('The base object must include a standard set of parameters (`params` key), @see `ModelBase`.');
   }
-  const results = Object.assign(
-    { instantLikelihood: 0, logLikelihood: 0 },
-    o.params.bimodal ? { outputValues: [], outputCovariance: [] } : {},
-  );
+  const results = {
+    instantLikelihood: 0,
+    logLikelihood: 0,
+  };
+  if (o.params.bimodal) {
+    results.outputValues = [];
+    results.outputCovariance = [];
+  }
   return Object.assign(
     o,
     predictionBasePrototype(o.params.bimodal),

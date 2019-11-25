@@ -13,8 +13,7 @@ const hmmParameterSpec = (states, transitionMode) => ({
   },
   regularization: {
     required: true,
-    check: ({ absolute, relative }) =>
-      (absolute && relative && absolute > 0 && relative > 0),
+    check: ({ absolute, relative }) => (absolute && relative && absolute > 0 && relative > 0),
   },
   transitionMode: {
     required: true,
@@ -26,17 +25,16 @@ const hmmParameterSpec = (states, transitionMode) => ({
   },
   prior: {
     required: true,
-    check: m => transitionMode === 'leftright' || m.length === states,
+    check: (m) => transitionMode === 'leftright' || m.length === states,
   },
   transition: {
     required: true,
-    check: m => (transitionMode === 'leftright' ?
-      m.length === 2 * states :
-      m.length === states),
+    check: (m) => (transitionMode === 'leftright'
+      ? m.length === 2 * states : m.length === states),
   },
   xStates: {
     required: true,
-    check: m => m.length === states,
+    check: (m) => m.length === states,
   },
 });
 
@@ -56,7 +54,7 @@ const hmmPredictionPrototype = /** @lends withHMMPrediction */ {
    * @private
    */
   setup() {
-    this.params.xStates = this.params.xStates.map(s => GMMPredictor(s).reset());
+    this.params.xStates = this.params.xStates.map((s) => GMMPredictor(s).reset());
     return this;
   },
 
@@ -76,9 +74,9 @@ const hmmPredictionPrototype = /** @lends withHMMPrediction */ {
    * @return {Number}
    */
   likelihood(observation) {
-    const ct = (this.forwardInitialized) ?
-      this.updateForwardAlgorithm(observation) :
-      this.initializeForwardAlgorithm(observation);
+    const ct = (this.forwardInitialized)
+      ? this.updateForwardAlgorithm(observation)
+      : this.initializeForwardAlgorithm(observation);
     this.updateAlphaWindow();
     this.updateProgress();
     return 1 / ct;
@@ -88,11 +86,10 @@ const hmmPredictionPrototype = /** @lends withHMMPrediction */ {
     this.results.progress = 0.0;
     for (let i = this.windowMinindex; i < this.windowMaxindex; i += 1) {
       if (this.isHierarchical) {
-        this.results.progress += (this.alpha[i] + this.alpha1[i] + this.alpha2[i]) *
-          (i / this.windowNormalizationConstant);
+        this.results.progress += (this.alpha[i] + this.alpha1[i] + this.alpha2[i])
+          * (i / this.windowNormalizationConstant);
       } else {
-        this.results.progress += (this.alpha[i] * i) /
-          this.windowNormalizationConstant;
+        this.results.progress += (this.alpha[i] * i) / this.windowNormalizationConstant;
       }
     }
     this.results.progress /= this.params.states - 1;
@@ -106,9 +103,9 @@ const hmmPredictionPrototype = /** @lends withHMMPrediction */ {
   updateAlphaWindow() {
     this.results.likeliestState = 0;
     // Get likeliest State
-    let bestAlpha = this.isHierarchical ?
-      (this.alpha[0] + this.alpha1[0]) :
-      this.alpha[0];
+    let bestAlpha = this.isHierarchical
+      ? (this.alpha[0] + this.alpha1[0])
+      : this.alpha[0];
     for (let i = 1; i < this.params.states; i += 1) {
       if (this.isHierarchical) {
         if ((this.alpha[i] + this.alpha1[i]) > bestAlpha) {
@@ -125,13 +122,12 @@ const hmmPredictionPrototype = /** @lends withHMMPrediction */ {
     this.windowMinindex = this.results.likeliestState - Math.floor(this.params.states / 2);
     this.windowMaxindex = this.results.likeliestState + Math.floor(this.params.states / 2);
     this.windowMinindex = (this.windowMinindex >= 0) ? this.windowMinindex : 0;
-    this.windowMaxindex = (this.windowMaxindex <= this.params.states) ?
-      this.windowMaxindex : this.params.states;
+    this.windowMaxindex = (this.windowMaxindex <= this.params.states)
+      ? this.windowMaxindex : this.params.states;
     this.windowNormalizationConstant = 0.0;
     for (let i = this.windowMinindex; i < this.windowMaxindex; i += 1) {
-      this.windowNormalizationConstant += this.isHierarchical ?
-        (this.alpha[i] + this.alpha1[i]) :
-        this.alpha[i];
+      this.windowNormalizationConstant += this.isHierarchical
+        ? (this.alpha[i] + this.alpha1[i]) : this.alpha[i];
     }
   },
 };
@@ -156,17 +152,17 @@ const hmmBimodalPredictionPrototype = /** @lends withHMMPrediction */ {
 
     if (this.params.regressionEstimator === 'likeliest') {
       this.params.xStates[this.results.likeliestState].predict(inputObservation);
-      this.results.outputValues =
-        this.params.xStates[this.results.likeliestState].results.outputValues;
+      this.results.outputValues = this.params.xStates[this.results.likeliestState]
+        .results.outputValues;
       return this.results.outputValues;
     }
 
-    const clipMinState = (this.params.regressionEstimator === 'full') ?
-      0 : this.windowMinindex;
-    const clipMaxState = (this.params.regressionEstimator === 'full') ?
-      this.params.states : this.windowMaxindex;
-    let normalizationConstant = (this.params.regressionEstimator === 'full') ?
-      1 : this.windowNormalizationConstant;
+    const clipMinState = (this.params.regressionEstimator === 'full')
+      ? 0 : this.windowMinindex;
+    const clipMaxState = (this.params.regressionEstimator === 'full')
+      ? this.params.states : this.windowMaxindex;
+    let normalizationConstant = (this.params.regressionEstimator === 'full')
+      ? 1 : this.windowNormalizationConstant;
 
     if (normalizationConstant <= 0.0) normalizationConstant = 1;
 
@@ -177,41 +173,35 @@ const hmmBimodalPredictionPrototype = /** @lends withHMMPrediction */ {
       const tmpPredictedOutput = this.params.xStates[i].results.outputValues;
       for (let d = 0; d < this.params.outputDimension; d += 1) {
         if (this.isHierarchical) {
-          this.results.outputValues[d] +=
-            (this.alpha[i] + this.alpha1[i]) *
-            (tmpPredictedOutput[d] / normalizationConstant);
+          this.results.outputValues[d] += (this.alpha[i] + this.alpha1[i])
+            * (tmpPredictedOutput[d] / normalizationConstant);
           if (this.params.covarianceMode === 'full') {
             for (let d2 = 0; d2 < this.params.outputDimension; d2 += 1) {
-              this.results.outputCovariance[(d * this.params.outputDimension) + d2] +=
-                (this.alpha[i] + this.alpha1[i]) *
-                (this.alpha[i] + this.alpha1[i]) *
-                (this.params.xStates[i].results
-                  .outputCovariance[(d * this.params.outputDimension) + d2] /
-                normalizationConstant);
+              this.results.outputCovariance[(d * this.params.outputDimension) + d2]
+                += (this.alpha[i] + this.alpha1[i])
+                * (this.alpha[i] + this.alpha1[i])
+                * (this.params.xStates[i].results
+                  .outputCovariance[(d * this.params.outputDimension) + d2]
+                  / normalizationConstant);
             }
           } else {
-            this.results.outputCovariance[d] +=
-              (this.alpha[i] + this.alpha1[i]) *
-              (this.alpha[i] + this.alpha1[i]) *
-              (this.params.xStates[i].results.outputCovariance[d] /
-              normalizationConstant);
+            this.results.outputCovariance[d] += (this.alpha[i] + this.alpha1[i])
+              * (this.alpha[i] + this.alpha1[i])
+              * (this.params.xStates[i].results.outputCovariance[d] / normalizationConstant);
           }
         } else {
-          this.results.outputValues[d] += this.alpha[i] *
-            (tmpPredictedOutput[d] / normalizationConstant);
+          this.results.outputValues[d] += this.alpha[i]
+            * (tmpPredictedOutput[d] / normalizationConstant);
           if (this.params.covarianceMode === 'full') {
             for (let d2 = 0; d2 < this.params.outputDimension; d2 += 1) {
-              this.results.outputCovariance[(d * this.params.outputDimension) + d2] +=
-                (this.alpha[i] ** 2) *
-                (this.params.xStates[i].results
-                  .outputCovariance[(d * this.params.outputDimension) + d2] /
-                normalizationConstant);
+              this.results.outputCovariance[(d * this.params.outputDimension) + d2]
+                += (this.alpha[i] ** 2) * (this.params.xStates[i].results
+                  .outputCovariance[(d * this.params.outputDimension) + d2]
+                  / normalizationConstant);
             }
           } else {
-            this.results.outputCovariance[d] +=
-              ((this.alpha[i] ** 2) *
-              this.params.xStates[i].results.outputCovariance[d]) /
-              normalizationConstant;
+            this.results.outputCovariance[d] += ((this.alpha[i] ** 2)
+              * this.params.xStates[i].results.outputCovariance[d]) / normalizationConstant;
           }
         }
       }

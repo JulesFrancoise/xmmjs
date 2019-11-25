@@ -21,8 +21,8 @@ const trainerPrototype = /** @lends withEMTraining */ {
       previousLogLikelihood = logLikelihood;
       logLikelihood = this.updateTraining(trainingSet);
 
-      const pctChg =
-        100 * Math.abs((logLikelihood - previousLogLikelihood) / previousLogLikelihood);
+      const pctChg = 100 * Math.abs((logLikelihood - previousLogLikelihood)
+        / previousLogLikelihood);
       if (Number.isNaN(pctChg) && iterations > 1) {
         throw new Error('An error occured during training');
       }

@@ -53,8 +53,8 @@ const gmmBasePrototype = /** @lends withGMMBase */ {
     if (mixtureComponent >= this.params.gaussians) {
       throw new Error('The index of the Gaussian Mixture Component is out of bounds');
     }
-    return this.params.mixtureCoeffs[mixtureComponent] *
-        this.params.components[mixtureComponent].likelihood(observation);
+    return this.params.mixtureCoeffs[mixtureComponent] * this.params
+      .components[mixtureComponent].likelihood(observation);
   },
 
   /**
@@ -130,13 +130,13 @@ const gmmBimodalPrototype = /** @lends withGMMBase */ {
         this.results.outputValues[d] += this.beta[c] * tmpOutputValues[d];
         if (this.params.covarianceMode === 'full') {
           for (let d2 = 0; d2 < this.params.outputDimension; d2 += 1) {
-            this.results.outputCovariance[(d * this.params.outputDimension) + d2] +=
-              (this.beta[c] ** 2) *
-              this.params.components[c].outputCovariance[(d * this.params.outputDimension) + d2];
+            this.results.outputCovariance[(d * this.params.outputDimension) + d2]
+              += (this.beta[c] ** 2)
+              * this.params.components[c].outputCovariance[(d * this.params.outputDimension) + d2];
           }
         } else {
-          this.results.outputCovariance[d] +=
-            (this.beta[c] ** 2) * this.params.components[c].outputCovariance[d];
+          this.results.outputCovariance[d] += (this.beta[c] ** 2)
+            * this.params.components[c].outputCovariance[d];
         }
       }
     }

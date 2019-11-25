@@ -60,21 +60,21 @@ const baseGaussianPrototype = /** @lends GaussianDistribution */ {
       for (let l = 0; l < this.dimension; l += 1) {
         let tmp = 0;
         for (let k = 0; k < this.dimension; k += 1) {
-          tmp += this.inverseCovariance[(l * this.dimension) + k] *
-            (observation[k] - this.mean[k]);
+          tmp += this.inverseCovariance[(l * this.dimension) + k]
+            * (observation[k] - this.mean[k]);
         }
         euclideanDistance += (observation[l] - this.mean[l]) * tmp;
       }
     } else {
       for (let l = 0; l < this.dimension; l += 1) {
-        euclideanDistance += this.inverseCovariance[l] *
-          (observation[l] - this.mean[l]) *
-          (observation[l] - this.mean[l]);
+        euclideanDistance += this.inverseCovariance[l]
+          * (observation[l] - this.mean[l])
+          * (observation[l] - this.mean[l]);
       }
     }
 
-    let p = Math.exp(-0.5 * euclideanDistance) /
-      Math.sqrt(this.covarianceDeterminant * ((2 * Math.PI) ** this.dimension));
+    let p = Math.exp(-0.5 * euclideanDistance)
+      / Math.sqrt(this.covarianceDeterminant * ((2 * Math.PI) ** this.dimension));
 
     if (p < 1e-180 || Number.isNaN(p) || Math.abs(p) === +Infinity) {
       p = 1e-180;
@@ -266,22 +266,22 @@ const bimodalGaussianPrototype = /** @lends GaussianDistribution */ {
       for (let l = 0; l < this.inputDimension; l += 1) {
         let tmp = 0;
         for (let k = 0; k < this.inputDimension; k += 1) {
-          tmp += this.inverseCovarianceInput[(l * this.inputDimension) + k] *
-            (inputObservation[k] - this.mean[k]);
+          tmp += this.inverseCovarianceInput[(l * this.inputDimension) + k]
+            * (inputObservation[k] - this.mean[k]);
         }
         euclideanDistance += (inputObservation[l] - this.mean[l]) * tmp;
       }
     } else {
       for (let l = 0; l < this.inputDimension; l += 1) {
-        euclideanDistance += this.inverseCovariance[l] *
-          (inputObservation[l] - this.mean[l]) *
-          (inputObservation[l] - this.mean[l]);
+        euclideanDistance += this.inverseCovariance[l]
+          * (inputObservation[l] - this.mean[l])
+          * (inputObservation[l] - this.mean[l]);
       }
     }
 
-    let p = Math.exp(-0.5 * euclideanDistance) /
-               Math.sqrt(this.covarianceDeterminantInput *
-                    ((2 * Math.PI) ** this.inputDimension));
+    let p = Math.exp(-0.5 * euclideanDistance)
+      / Math.sqrt(this.covarianceDeterminantInput
+        * ((2 * Math.PI) ** this.inputDimension));
 
     if (p < 1e-180 || Number.isNaN(p) || Math.abs(p) === +Infinity) p = 1e-180;
 
@@ -307,11 +307,10 @@ const bimodalGaussianPrototype = /** @lends GaussianDistribution */ {
         for (let e = 0; e < this.inputDimension; e += 1) {
           let tmp = 0;
           for (let f = 0; f < this.inputDimension; f += 1) {
-            tmp += this.inverseCovarianceInput[(e * this.inputDimension) + f] *
-              (inputObservation[f] - this.mean[f]);
+            tmp += this.inverseCovarianceInput[(e * this.inputDimension) + f]
+              * (inputObservation[f] - this.mean[f]);
           }
-          prediction[d] += tmp *
-            this.covariance[((d + this.inputDimension) * this.dimension) + e];
+          prediction[d] += tmp * this.covariance[((d + this.inputDimension) * this.dimension) + e];
         }
       }
     } else {
@@ -331,8 +330,8 @@ const bimodalGaussianPrototype = /** @lends GaussianDistribution */ {
       const covMatrixInput = Matrix(this.inputDimension, this.inputDimension);
       for (let d1 = 0; d1 < this.inputDimension; d1 += 1) {
         for (let d2 = 0; d2 < this.inputDimension; d2 += 1) {
-          covMatrixInput.data[(d1 * this.inputDimension) + d2] =
-            this.covariance[(d1 * this.dimension) + d2];
+          covMatrixInput.data[(d1 * this.inputDimension) + d2] = this.covariance[
+            (d1 * this.dimension) + d2];
         }
       }
       const invInput = covMatrixInput.pinv();
@@ -365,23 +364,23 @@ const bimodalGaussianPrototype = /** @lends GaussianDistribution */ {
     const covMatrixInput = Matrix(this.inputDimension, this.inputDimension);
     for (let d1 = 0; d1 < this.inputDimension; d1 += 1) {
       for (let d2 = 0; d2 < this.inputDimension; d2 += 1) {
-        covMatrixInput.data[(d1 * this.inputDimension) + d2] =
-          this.covariance[(d1 * this.dimension) + d2];
+        covMatrixInput.data[(d1 * this.inputDimension) + d2] = this.covariance[
+          (d1 * this.dimension) + d2];
       }
     }
     const inv = covMatrixInput.pinv();
     const covarianceGS = Matrix(this.inputDimension, this.outputDimension);
     for (let d1 = 0; d1 < this.inputDimension; d1 += 1) {
       for (let d2 = 0; d2 < this.outputDimension; d2 += 1) {
-        covarianceGS.data[(d1 * this.outputDimension) + d2] =
-          this.covariance[(d1 * this.dimension) + this.inputDimension + d2];
+        covarianceGS.data[(d1 * this.outputDimension) + d2] = this.covariance[
+          (d1 * this.dimension) + this.inputDimension + d2];
       }
     }
     const covarianceSG = Matrix(this.outputDimension, this.inputDimension);
     for (let d1 = 0; d1 < this.outputDimension; d1 += 1) {
       for (let d2 = 0; d2 < this.inputDimension; d2 += 1) {
-        covarianceSG.data[(d1 * this.inputDimension) + d2] =
-          this.covariance[((this.inputDimension + d1) * this.dimension) + d2];
+        covarianceSG.data[(d1 * this.inputDimension) + d2] = this.covariance[
+          ((this.inputDimension + d1) * this.dimension) + d2];
       }
     }
     const tmptmptmp = inv.matrix.product(covarianceGS);
@@ -389,10 +388,9 @@ const bimodalGaussianPrototype = /** @lends GaussianDistribution */ {
     this.outputCovariance = Array(this.outputDimension ** 2).fill(0);
     for (let d1 = 0; d1 < this.outputDimension; d1 += 1) {
       for (let d2 = 0; d2 < this.outputDimension; d2 += 1) {
-        this.outputCovariance[(d1 * this.outputDimension) + d2] =
-          this.covariance[((this.inputDimension + d1) * this.dimension) +
-            this.inputDimension + d2] -
-            covarianceMod.data[(d1 * this.outputDimension) + d2];
+        this.outputCovariance[(d1 * this.outputDimension) + d2] = this.covariance[
+          ((this.inputDimension + d1) * this.dimension) + this.inputDimension + d2]
+          - covarianceMod.data[(d1 * this.outputDimension) + d2];
       }
     }
   },
@@ -426,20 +424,20 @@ export default function GaussianDistribution(
 ) {
   const bimodal = outputDimension > 0;
   const dimension = inputDimension + outputDimension;
-  const proto = bimodal ?
-    Object.assign({}, baseGaussianPrototype, bimodalGaussianPrototype) :
-    baseGaussianPrototype;
-  const data = Object.assign(
-    {
-      bimodal,
-      dimension,
-      inputDimension,
-      outputDimension,
-      covarianceMode,
-      covarianceDeterminant: 0,
-    },
-    bimodal ? { covarianceDeterminantInput: 0 } : {},
-  );
+  const proto = bimodal
+    ? { ...baseGaussianPrototype, ...bimodalGaussianPrototype }
+    : baseGaussianPrototype;
+  const data = {
+    bimodal,
+    dimension,
+    inputDimension,
+    outputDimension,
+    covarianceMode,
+    covarianceDeterminant: 0,
+  };
+  if (bimodal) {
+    data.covarianceDeterminantInput = 0;
+  }
   const dist = Object.assign(
     Object.create(proto),
     data,

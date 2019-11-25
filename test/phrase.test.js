@@ -45,8 +45,8 @@ test('Push data to a bimodal phrase', (t) => {
   data.forEach((frame) => {
     p.push(frame);
   });
-  t.deepEqual(data.map(x => x.slice(0, 2)), p.inputData);
-  t.deepEqual(data.map(x => x.slice(2, 4)), p.outputData);
+  t.deepEqual(data.map((x) => x.slice(0, 2)), p.inputData);
+  t.deepEqual(data.map((x) => x.slice(2, 4)), p.outputData);
   data.forEach((frame, i) => {
     frame.forEach((x, d) => {
       t.is(x, p.get(i, d));

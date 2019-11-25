@@ -47,8 +47,8 @@ const matrixPrototype = /** @lends Matrix */ {
       for (let j = 0; j < mat.ncols; j += 1) {
         out.data[(i * mat.ncols) + j] = 0;
         for (let k = 0; k < this.ncols; k += 1) {
-          out.data[(i * mat.ncols) + j] +=
-            this.data[(i * this.ncols) + k] * mat.data[(k * mat.ncols) + j];
+          out.data[(i * mat.ncols) + j] += this.data[(i * this.ncols) + k]
+            * mat.data[(k * mat.ncols) + j];
         }
       }
     }
@@ -121,9 +121,8 @@ const matrixPrototype = /** @lends Matrix */ {
       for (let ii = 0; ii < n; ii += 1) {
         if (ii !== k) {
           for (let j = 0; j < 2 * n; j += 1) {
-            newMat.data[(ii * 2 * n) + j] -=
-                mat.data[(ii * 2 * n) + k] *
-                newMat.data[(k * 2 * n) + j];
+            newMat.data[(ii * 2 * n) + j] -= mat.data[(ii * 2 * n) + k]
+              * newMat.data[(k * 2 * n) + j];
           }
         }
       }

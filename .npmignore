@@ -1,7 +1,11 @@
+coverage
 docs
+examples
 src
 test
 *.yml
 .babelrc
 .eslintrc.js
+.circleci
 .nyc_output
+rollup.config.js

@@ -1,0 +1,7 @@
+docs
+src
+test
+*.yml
+.babelrc
+.eslintrc.js
+.nyc_output

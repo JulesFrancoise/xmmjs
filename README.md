@@ -9,9 +9,9 @@ From Ircam's XMM library (https://github.com/Ircam-RnD/xmm):
 #### Node.js
 
 ```shell
-yarn add JulesFrancoise/xmmjs
+yarn add xmmjs
 # OR
-npm install --save JulesFrancoise/xmmjs
+npm install --save xmmjs
 ```
 
 #### In the browser

@@ -25,7 +25,7 @@ npm install --save xmmjs
 Basic example of GMM-based recognition
 
 ```js
-const xmm = require('xmm');
+const xmm = require('xmmjs');
 
 // Create a training set to host the training data
 const ts = xmm.TrainingSet({ inputDimension: 3 });
